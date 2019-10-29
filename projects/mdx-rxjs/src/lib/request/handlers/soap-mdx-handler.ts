@@ -1,0 +1,132 @@
+import { Observable } from 'rxjs';
+import { XmlMdxHandler } from './xml-mdx-handler';
+import { IMdxResponse } from '../models/mdx-response';
+
+export class SoapMdxHandler extends XmlMdxHandler {
+  private readonly _baseXPath: string = '/soap:Envelope/soap:Body/xmla:ExecuteResponse/xmla:return';
+  private readonly _dataRootXPath: string = `${this._baseXPath}/data:root`;
+  private readonly _errorXPath: string = `${this._baseXPath}/empty:root/exception:Messages/exception:Error/@Description`;
+  private readonly _faultXPath: string = '/soap:Envelope/soap:Body/soap:Fault/soap:faultstring';
+  private readonly _namespaceResolver: XPathNSResolver = {
+    lookupNamespaceURI: (prefix: string): string => {
+      switch (prefix) {
+        case 'soap':
+          return 'http://schemas.xmlsoap.org/soap/envelope/';
+        case 'xmla':
+          return 'urn:schemas-microsoft-com:xml-analysis';
+        case 'data':
+          return 'urn:schemas-microsoft-com:xml-analysis:mddataset';
+        case 'exception':
+          return 'urn:schemas-microsoft-com:xml-analysis:exception';
+        case 'empty':
+          return 'urn:schemas-microsoft-com:xml-analysis:empty';
+        default:
+          return '';
+      }
+    }
+  };
+
+  constructor(private readonly catalog: string, private readonly url: string) {
+    super();
+  }
+
+  post(mdxStatement: string): Observable<IMdxResponse> {
+    return new Observable(subscriber => {
+      const xhr = new XMLHttpRequest();
+      xhr.withCredentials = true;
+      xhr.open('POST', this.url, true);
+      xhr.onreadystatechange = () => {
+        if (xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            if (xhr.responseXML) {
+              const rootXPathResult = xhr.responseXML.evaluate(
+                this._dataRootXPath,
+                xhr.responseXML,
+                this._namespaceResolver,
+                XPathResult.ANY_TYPE,
+                null
+              );
+
+              const rootNode = rootXPathResult.iterateNext();
+              if (rootNode) {
+                const response = this.deserializeResponse(rootNode as Element);
+                subscriber.next(response);
+              } else {
+                const error = this.deserializeErrors(xhr.responseXML) || this.deserializeFault(xhr.responseXML) || xhr.response;
+                subscriber.error(error);
+              }
+            }
+
+            subscriber.complete();
+          } else {
+            subscriber.error(xhr.response);
+          }
+        }
+      };
+
+      xhr.setRequestHeader('Content-Type', 'text/xml');
+
+      const soapEnvelope = this.createSoapEnvelope(mdxStatement);
+      xhr.send(soapEnvelope);
+
+      return () => {
+        xhr.abort();
+      };
+    });
+  }
+
+  private createSoapEnvelope(mdxStatement: string): string {
+    return `<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
+  <Body>
+    <Execute xmlns="urn:schemas-microsoft-com:xml-analysis">
+      <Command>
+        <Statement>
+          <![CDATA[
+            ${mdxStatement}
+          ]]>
+        </Statement>
+      </Command>
+      <Properties>
+        <PropertyList>
+          <Catalog>${this.catalog}</Catalog>
+          <ShowHiddenCubes>True</ShowHiddenCubes>
+          <SspropInitAppName>Microsoft SQL Server Management Studio</SspropInitAppName>
+          <Timeout>3600</Timeout>
+          <LocaleIdentifier>9</LocaleIdentifier>
+        </PropertyList>
+      </Properties>
+    </Execute>
+  </Body>
+</Envelope>`;
+  }
+
+  private deserializeErrors(xml: Document): string | string[] | null {
+    const errors: string[] = [];
+    const errorXPathResult = xml.evaluate(this._errorXPath, xml, this._namespaceResolver, XPathResult.ANY_TYPE, null);
+    let errorNode = errorXPathResult.iterateNext();
+
+    while (errorNode) {
+      if (errorNode.textContent) {
+        errors.push(errorNode.textContent);
+      }
+
+      errorNode = errorXPathResult.iterateNext();
+    }
+
+    if (errors.length > 1) {
+      return errors;
+    }
+
+    if (errors.length === 1) {
+      return errors[0];
+    }
+
+    return null;
+  }
+
+  private deserializeFault(xml: Document): string | null {
+    const faultXPathResult = xml.evaluate(this._faultXPath, xml, this._namespaceResolver, XPathResult.ANY_TYPE, null);
+    const faultNode = faultXPathResult.iterateNext();
+    return faultNode ? faultNode.textContent : null;
+  }
+}

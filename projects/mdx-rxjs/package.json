@@ -1,0 +1,12 @@
+{
+  "name": "@healthcatalyst/mdx-rxjs",
+  "version": "0.0.1-beta",
+  "peerDependencies": {
+    "rxjs": "^6.5.2"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "license": "Apache-2.0",
+  "readme": "Readme.md"
+}
