@@ -10,21 +10,15 @@
     "module": "esnext",
     "moduleResolution": "node",
     "importHelpers": true,
+    "strict": true,
+    "noImplicitAny": false,
+    "strictFunctionTypes": false,
     "target": "es2015",
-    "typeRoots": [
-      "node_modules/@types"
-    ],
-    "lib": [
-      "es2018",
-      "dom"
-    ],
+    "typeRoots": ["node_modules/@types"],
+    "lib": ["es2018", "dom"],
     "paths": {
-      "mdx-rxjs": [
-        "dist/mdx-rxjs"
-      ],
-      "mdx-rxjs/*": [
-        "dist/mdx-rxjs/*"
-      ]
+      "mdx-rxjs": ["dist/mdx-rxjs"],
+      "mdx-rxjs/*": ["dist/mdx-rxjs/*"]
     }
   },
   "angularCompilerOptions": {
