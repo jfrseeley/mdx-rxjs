@@ -1,4 +1,4 @@
-import { IMdxFilter } from '../../query/models/mdx-filter';
+import { IMdxFilter } from '../../mdx-types';
 import { MdxVirtualRowDefinition, IMdxVirtualRowConfig } from './mdx-virtual-row-config';
 import { GetMdxVirtualRowCellDelegate, IMdxVirtualRow } from './mdx-virtual-row';
 import { Observable } from 'rxjs';

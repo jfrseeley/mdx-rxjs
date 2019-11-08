@@ -1,4 +1,4 @@
-import { MdxValue } from '../../mdx-expressions';
+import { MdxValue } from '../../mdx-types';
 
 export interface IMdxMember {
   isMeasure: boolean;

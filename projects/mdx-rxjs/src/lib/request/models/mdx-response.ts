@@ -1,4 +1,4 @@
-import { MdxValue } from '../../mdx-expressions';
+import { MdxValue } from '../../mdx-types';
 import { IMdxAxis } from './mdx-axis';
 import { IMdxCell } from './mdx-cell';
 
@@ -60,7 +60,7 @@ export class MdxResponse implements IMdxResponse {
     });
 
     return {
-      axes: axes,
+      axes,
       axisCount: this.axes.length,
       cellCount: this.cellData.length
     };

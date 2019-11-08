@@ -1,5 +1,5 @@
-import { Observable } from 'rxjs/internal/Observable';
-import { MdxValue } from '../../mdx-expressions';
+import { Observable } from 'rxjs';
+import { MdxValue } from '../../mdx-types';
 import { IMdxHandler } from './mdx-handler';
 import { IMdxAxis, MdxAxis } from '../models/mdx-axis';
 import { IMdxCell } from '../models/mdx-cell';
@@ -86,8 +86,8 @@ export abstract class XmlMdxHandler implements IMdxHandler {
     });
 
     return {
-      value: value,
-      valueFormatted: valueFormatted
+      value,
+      valueFormatted
     };
   }
 

@@ -1,6 +1,7 @@
 import { MdxLevelExpression, MdxMemberExpression, MdxSetExpression } from '../mdx-expressions';
-import { IMdxSortOptions } from './models/mdx-query.options';
-import { IMdxDimensionQuery, IMdxTableQuery } from './models/mdx-query';
+import { IMdxSortOptions } from './models/mdx-sort-options';
+import { IMdxDimensionQuery } from './models/mdx-dimension-query';
+import { IMdxTableQuery } from './models/mdx-table-query';
 import { MdxExpressionFactory } from './mdx-expression-factory';
 import { MdxQueryBuilder } from './mdx-query-builder';
 

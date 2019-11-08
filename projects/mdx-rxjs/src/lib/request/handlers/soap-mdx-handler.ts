@@ -3,11 +3,11 @@ import { XmlMdxHandler } from './xml-mdx-handler';
 import { IMdxResponse } from '../models/mdx-response';
 
 export class SoapMdxHandler extends XmlMdxHandler {
-  private readonly _baseXPath: string = '/soap:Envelope/soap:Body/xmla:ExecuteResponse/xmla:return';
-  private readonly _dataRootXPath: string = `${this._baseXPath}/data:root`;
-  private readonly _errorXPath: string = `${this._baseXPath}/empty:root/exception:Messages/exception:Error/@Description`;
-  private readonly _faultXPath: string = '/soap:Envelope/soap:Body/soap:Fault/soap:faultstring';
-  private readonly _namespaceResolver: XPathNSResolver = {
+  private readonly baseXPath: string = '/soap:Envelope/soap:Body/xmla:ExecuteResponse/xmla:return';
+  private readonly dataRootXPath: string = `${this.baseXPath}/data:root`;
+  private readonly errorXPath: string = `${this.baseXPath}/empty:root/exception:Messages/exception:Error/@Description`;
+  private readonly faultXPath: string = '/soap:Envelope/soap:Body/soap:Fault/soap:faultstring';
+  private readonly namespaceResolver: XPathNSResolver = {
     lookupNamespaceURI: (prefix: string): string => {
       switch (prefix) {
         case 'soap':
@@ -40,9 +40,9 @@ export class SoapMdxHandler extends XmlMdxHandler {
           if (xhr.status === 200) {
             if (xhr.responseXML) {
               const rootXPathResult = xhr.responseXML.evaluate(
-                this._dataRootXPath,
+                this.dataRootXPath,
                 xhr.responseXML,
-                this._namespaceResolver,
+                this.namespaceResolver,
                 XPathResult.ANY_TYPE,
                 null
               );
@@ -102,7 +102,7 @@ export class SoapMdxHandler extends XmlMdxHandler {
 
   private deserializeErrors(xml: Document): string | string[] | null {
     const errors: string[] = [];
-    const errorXPathResult = xml.evaluate(this._errorXPath, xml, this._namespaceResolver, XPathResult.ANY_TYPE, null);
+    const errorXPathResult = xml.evaluate(this.errorXPath, xml, this.namespaceResolver, XPathResult.ANY_TYPE, null);
     let errorNode = errorXPathResult.iterateNext();
 
     while (errorNode) {
@@ -125,7 +125,7 @@ export class SoapMdxHandler extends XmlMdxHandler {
   }
 
   private deserializeFault(xml: Document): string | null {
-    const faultXPathResult = xml.evaluate(this._faultXPath, xml, this._namespaceResolver, XPathResult.ANY_TYPE, null);
+    const faultXPathResult = xml.evaluate(this.faultXPath, xml, this.namespaceResolver, XPathResult.ANY_TYPE, null);
     const faultNode = faultXPathResult.iterateNext();
     return faultNode ? faultNode.textContent : null;
   }

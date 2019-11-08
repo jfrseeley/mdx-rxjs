@@ -1,9 +1,9 @@
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { MdxExpressionTransform, MdxValue } from './mdx-expressions';
-import { IMdxFilter } from './query/models/mdx-filter';
-import { IMdxQueryOptions } from './query/models/mdx-query.options';
-import { IMdxDimensionQuery, IMdxTableQuery } from './query/models/mdx-query';
+import { MdxExpressionTransform, MdxValue, IMdxFilter } from './mdx-types';
+import { IMdxQueryOptions } from './query/models/mdx-query-options';
+import { IMdxDimensionQuery } from './query/models/mdx-dimension-query';
+import { IMdxTableQuery } from './query/models/mdx-table-query';
 import { MdxQuerySerializer } from './query/mdx-query-serializer';
 import { IMdxHandler } from './request/handlers/mdx-handler';
 import { IMdxMember } from './request/models/mdx-member';
@@ -22,12 +22,12 @@ import { MdxVirtualRowBuilder } from './api/virtual-row/mdx-virtual-row-builder'
 import { IMdxVirtualRowConfig } from './api/virtual-row/mdx-virtual-row-config';
 import { GetMdxVirtualRowCellDelegate } from './api/virtual-row/mdx-virtual-row';
 
-export type DimensionQueryOptions = Pick<IMdxDimensionQuery, Exclude<keyof IMdxDimensionQuery, 'attributes'>>;
+export interface IDimensionQueryOptions extends Pick<IMdxDimensionQuery, Exclude<keyof IMdxDimensionQuery, 'attributes'>> {}
 
 export class Mdx {
   private readonly mdxQuerySerializer: MdxQuerySerializer;
 
-  constructor(cube: string, private readonly handler: IMdxHandler) {
+  constructor(cube: string, protected readonly handler: IMdxHandler) {
     this.mdxQuerySerializer = new MdxQuerySerializer(cube);
   }
 
@@ -118,10 +118,10 @@ export class Mdx {
     );
   }
 
-  getDimensionData(attributes: string[], options?: DimensionQueryOptions): Observable<IMdxDimensionRowResult<IMdxAttributeData>> {
+  getDimensionData(attributes: string[], options?: IDimensionQueryOptions): Observable<IMdxDimensionRowResult<IMdxAttributeData>> {
     const query: IMdxDimensionQuery = {
       ...options,
-      attributes: attributes
+      attributes
     };
 
     const includeTotalCount = query.includeTotalCount || false;
@@ -146,7 +146,7 @@ export class Mdx {
             }
 
             dataRows.push({
-              data: data,
+              data,
               isNonEmpty: response.getCellValue(dataIndex++) === 1
             });
 
@@ -171,7 +171,7 @@ export class Mdx {
 
   getDimensionDtos<TDimensionData>(
     attributes: MdxExpressionTransform<TDimensionData>,
-    options?: DimensionQueryOptions
+    options?: IDimensionQueryOptions
   ): Observable<IMdxDimensionRowResult<TDimensionData>> {
     const attributeMap = this.createExpressionMap(attributes);
     return this.getDimensionData(Array.from(attributeMap.keys()), options).pipe(
@@ -210,8 +210,8 @@ export class Mdx {
   getTableRowData(measures: string[], rows: string[], options?: IMdxQueryOptions): Observable<IMdxTableRowResult<IMdxTableRowData>> {
     const query: IMdxTableQuery = {
       ...options,
-      measures: measures,
-      rows: rows
+      measures,
+      rows
     };
 
     const includeTotals = (query.filters && query.filters.some(f => f.includeAll)) || false;
@@ -290,7 +290,7 @@ export class Mdx {
     );
   }
 
-  getTableRowDtos<TRow extends Object>(
+  getTableRowDtos<TRow extends object>(
     measuresAndRows: MdxExpressionTransform<TRow>,
     options?: IMdxQueryOptions
   ): Observable<IMdxTableRowResult<TRow>> {
@@ -341,7 +341,7 @@ export class Mdx {
   private getVirtualRows<TRowCell>(config: IMdxVirtualRowConfig<TRowCell>, filters?: IMdxFilter[]): Observable<TRowCell[][]> {
     const query: IMdxTableQuery = {
       measures: config.measures,
-      filters: filters
+      filters
     };
 
     return this.postTableQuery(query).pipe(

@@ -1,6 +1,7 @@
 import { MdxLevelExpression, MdxSetExpression } from '../mdx-expressions';
-import { IMdxFilter } from './models/mdx-filter';
-import { IMdxFilterOptions, IMdxSortOptions } from './models/mdx-query.options';
+import { IMdxFilter } from '../mdx-types';
+import { IMdxFilterOptions } from './models/mdx-filter-options';
+import { IMdxSortOptions } from './models/mdx-sort-options';
 
 export class MdxExpressionFactory {
   readonly queryAxisFilters: Map<string, IMdxFilter>;

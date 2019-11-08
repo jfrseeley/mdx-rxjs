@@ -1,8 +1,5 @@
-export type MdxComparisonOperator = '<' | '<=' | '<>' | '=' | '>' | '>=';
-export type MdxSortExpression = 'ASC' | 'DESC' | 'BASC' | 'BDESC';
-export type MdxValue = string | number | null;
+import { MdxValue, MdxComparisonOperator, MdxSortExpression } from './mdx-types';
 
-export type MdxExpressionTransform<TDto> = { [P in keyof TDto]: string };
 export type MdxExpressionType = 'string' | 'hierarchy' | 'level' | 'logical' | 'member' | 'numeric' | 'set' | 'stringOrNumeric';
 interface IMdxExpression {
   readonly expression: string;

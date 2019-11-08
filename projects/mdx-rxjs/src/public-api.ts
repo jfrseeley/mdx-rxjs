@@ -1,31 +1,6 @@
-/* Root */
-// export * from './lib/mdx-dimension';
 // export * from './lib/mdx-expressions';
-// export * from './lib/mdx-measures';
+export * from './lib/mdx-types';
 export * from './lib/mdx';
-
-/* Query */
-// export * from './lib/query/mdx-expression-factory';
-// export * from './lib/query/mdx-query-builder';
-// export * from './lib/query/mdx-query-serializer';
-
-/* Query - Models */
-export * from './lib/query/models/mdx-filter';
-export * from './lib/query/models/mdx-order-by';
-export * from './lib/query/models/mdx-query.options';
-// export * from './lib/query/models/mdx-query';
-
-/* Request - Handlers */
-export * from './lib/request/handlers/mdx-handler';
-export * from './lib/request/handlers/soap-mdx-handler';
-export * from './lib/request/handlers/xml-mdx-handler';
-
-/* Request - Models */
-export * from './lib/request/models/mdx-axis';
-export * from './lib/request/models/mdx-cell';
-export * from './lib/request/models/mdx-member';
-export * from './lib/request/models/mdx-response';
-export * from './lib/request/models/mdx-tuple';
 
 /* API */
 export * from './lib/api/mdx-attribute-data';
@@ -50,3 +25,27 @@ export * from './lib/api/table/mdx-table-row-result';
 export * from './lib/api/virtual-row/mdx-virtual-row-builder';
 export * from './lib/api/virtual-row/mdx-virtual-row-config';
 export * from './lib/api/virtual-row/mdx-virtual-row';
+
+/* Query */
+// export * from './lib/query/mdx-expression-factory';
+// export * from './lib/query/mdx-query-builder';
+// export * from './lib/query/mdx-query-serializer';
+
+/* Query - Models */
+export * from './lib/query/models/mdx-dimension-query';
+export * from './lib/query/models/mdx-filter-options';
+export * from './lib/query/models/mdx-query-options';
+export * from './lib/query/models/mdx-sort-options';
+export * from './lib/query/models/mdx-table-query';
+
+/* Request - Handlers */
+export * from './lib/request/handlers/mdx-handler';
+export * from './lib/request/handlers/soap-mdx-handler';
+export * from './lib/request/handlers/xml-mdx-handler';
+
+/* Request - Models */
+export * from './lib/request/models/mdx-axis';
+export * from './lib/request/models/mdx-cell';
+export * from './lib/request/models/mdx-member';
+export * from './lib/request/models/mdx-response';
+export * from './lib/request/models/mdx-tuple';

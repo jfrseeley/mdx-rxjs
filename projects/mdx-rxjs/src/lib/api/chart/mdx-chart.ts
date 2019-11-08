@@ -1,4 +1,4 @@
-import { MdxValue } from '../../mdx-expressions';
+import { MdxValue } from '../../mdx-types';
 import { MdxMemberSet } from '../mdx-member-set';
 import { IMdxChartData } from './mdx-chart-data';
 import { IMdxChartSeriesGroup } from './mdx-chart-series-group';
