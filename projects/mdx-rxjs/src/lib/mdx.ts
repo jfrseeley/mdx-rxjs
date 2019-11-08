@@ -38,6 +38,7 @@ export class Mdx {
       rows: config.groupByLevelExpression ? [config.xAxisLevelExpression, config.groupByLevelExpression] : [config.xAxisLevelExpression]
     };
 
+    const includeTotals = (query.filters && query.filters.some(f => f.includeAll)) || false;
     return this.postTableQuery(query).pipe(
       map(response => {
         const columnTuples = response.getColumnAxis().tuples;
@@ -57,6 +58,9 @@ export class Mdx {
 
         if (seriesNameSet.size === 0) {
           seriesNameSet.add(MdxMemberSet.Default);
+          if (includeTotals) {
+            seriesNameSet.add(MdxMemberSet.All);
+          }
         }
 
         const data: IMdxChartData = {};

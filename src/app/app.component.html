@@ -1,61 +1,101 @@
-<h1>Configuration</h1>
+<h1>General Configuration</h1>
 <form [formGroup]="mdxForm">
-  <div>
-    <label>Cube</label>
-    <input type="text" formControlName="cube" required="required" />
-  </div>
-  <div>
-    <label>Catalog</label>
-    <input type="text" formControlName="catalog" required="required" />
-  </div>
-  <div>
-    <label>URL</label>
-    <input type="url" formControlName="url" required="required" />
+  <div class="flex">
+    <div class="flex-1">
+      <div>
+        <label>Cube</label>
+        <input type="text" formControlName="cube" required="required" />
+      </div>
+      <div>
+        <label>Catalog</label>
+        <input type="text" formControlName="catalog" required="required" />
+      </div>
+      <div>
+        <label>Url</label>
+        <input type="url" formControlName="url" required="required" />
+      </div>
+    </div>
+    <div class="flex-1">
+      <div>
+        <label>Skip</label>
+        <input type="number" formControlName="skip" />
+      </div>
+      <div>
+        <label>Top</label>
+        <input type="number" formControlName="top" />
+      </div>
+      <div>
+        <label>Include Total Count</label>
+        <input type="checkbox" formControlName="includeTotalCount" />
+      </div>
+    </div>
+    <div class="flex-1">
+      <div>
+        <label>Filters</label>
+        <textarea formControlName="filters" rows="5"></textarea>
+      </div>
+      <div>
+        <label>Order By</label>
+        <textarea formControlName="orderBy" rows="5"></textarea>
+      </div>
+    </div>
   </div>
 </form>
 
-<h4>Chart</h4>
-<form [formGroup]="chartForm" (ngSubmit)="loadChart()">
-  <div>
-    <label>Measures</label>
-    <textarea formControlName="measures" required="required" rows="5"></textarea>
-  </div>
-  <div>
-    <label>X-Axis Level Expression</label>
-    <input type="text" formControlName="xAxis" required="required" />
-  </div>
-  <div>
-    <label>Group By Level Expression</label>
-    <input type="text" formControlName="groupBy" />
-  </div>
+<div class="flex">
+  <div class="flex-1">
+    <h2>Chart</h2>
+    <form [formGroup]="chartForm" (ngSubmit)="loadChart()">
+      <div>
+        <label>Measures</label>
+        <textarea formControlName="measures" required="required" rows="5"></textarea>
+      </div>
+      <div>
+        <label>X-Axis Level Expression</label>
+        <input type="text" formControlName="xAxis" required="required" />
+      </div>
+      <div>
+        <label>Group By Level Expression</label>
+        <input type="text" formControlName="groupBy" />
+      </div>
 
-  <button type="submit" [disabled]="!mdxForm.valid || !chartForm.valid">Load</button>
-</form>
-
-<h4>Dimension</h4>
-<form [formGroup]="dimensionForm" (ngSubmit)="loadDimension()">
-  <div>
-    <label>Attributes</label>
-    <textarea formControlName="attributes" required="required" rows="5"></textarea>
+      <button type="submit" [disabled]="!mdxForm.valid || !chartForm.valid">Load</button>
+    </form>
   </div>
-  <div>
-    <label>Measures</label>
-    <textarea formControlName="measures" rows="5"></textarea>
-  </div>
+  <div class="flex-1">
+    <h2>Dimension</h2>
+    <form [formGroup]="dimensionForm" (ngSubmit)="loadDimension()">
+      <div>
+        <label>Attributes</label>
+        <textarea formControlName="attributes" required="required" rows="5"></textarea>
+      </div>
+      <div>
+        <label>Measures</label>
+        <textarea formControlName="measures" rows="5"></textarea>
+      </div>
 
-  <button type="submit" [disabled]="!mdxForm.valid || !dimensionForm.valid">Load</button>
-</form>
-
-<h4>Table Rows</h4>
-<form [formGroup]="tableRowForm" (ngSubmit)="loadTableRows()">
-  <div>
-    <label>Measures</label>
-    <textarea formControlName="measures" required="required" rows="5"></textarea>
+      <button type="submit" [disabled]="!mdxForm.valid || !dimensionForm.valid">Load</button>
+    </form>
   </div>
-  <div>
-    <label>Rows</label>
-    <textarea formControlName="rows" required="required" rows="5"></textarea>
-  </div>
+  <div class="flex-1">
+    <h2>Table Rows</h2>
+    <form [formGroup]="tableRowForm" (ngSubmit)="loadTableRows()">
+      <div>
+        <label>Measures</label>
+        <textarea formControlName="measures" required="required" rows="5"></textarea>
+      </div>
+      <div>
+        <label>Rows</label>
+        <textarea formControlName="rows" required="required" rows="5"></textarea>
+      </div>
 
-  <button type="submit" [disabled]="!mdxForm.valid || !tableRowForm.valid">Load</button>
-</form>
+      <button type="submit" [disabled]="!mdxForm.valid || !tableRowForm.valid">Load</button>
+    </form>
+  </div>
+</div>
+
+<h2>Request</h2>
+<pre>{{ request }}</pre>
+
+<h2>Response</h2>
+<pre>{{ response }}</pre>

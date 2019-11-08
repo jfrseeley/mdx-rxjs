@@ -1,1 +1,22 @@
-/* You can add global styles to this file, and also import other style files */
+label {
+  display: block;
+  font-weight: bold;
+}
+
+input,
+textarea {
+  min-width: 250px;
+}
+
+pre {
+  max-height: 500px;
+  overflow: auto;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-1 {
+  flex: 1;
+}

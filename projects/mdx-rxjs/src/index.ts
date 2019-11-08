@@ -40,6 +40,7 @@ export * from './lib/query/models/mdx-table-query';
 
 /* Request - Handlers */
 export * from './lib/request/handlers/mdx-handler';
+export * from './lib/request/handlers/proxy-mdx-handler';
 export * from './lib/request/handlers/soap-mdx-handler';
 export * from './lib/request/handlers/xml-mdx-handler';
 
