@@ -362,7 +362,7 @@ export class MdxSetExpression extends MdxExpression implements MdxSetExpression 
   order(value: MdxValueType, sortExpression?: MdxSortExpression): MdxSetExpression {
     return sortExpression
       ? new MdxSetExpression(`ORDER(${this.expression},${value},${sortExpression})`)
-      : new MdxSetExpression(`ORDER(${this.expression},${value}`);
+      : new MdxSetExpression(`ORDER(${this.expression},${value})`);
   }
 
   subset(start: MdxNumericType, count?: MdxNumericType): MdxSetExpression {

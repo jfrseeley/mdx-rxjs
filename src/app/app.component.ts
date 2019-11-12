@@ -9,7 +9,8 @@ import {
   MdxSortExpression,
   IMdxFilter,
   IMdxOrderBy,
-  IMdxQueryOptions
+  IMdxQueryOptions,
+  IMdxChartConfig
 } from '../../projects/mdx-rxjs/src';
 
 interface IMdxFormData {
@@ -59,6 +60,7 @@ export class AppComponent {
   dimensionForm: FormGroup;
   tableRowForm: FormGroup;
 
+  query = '';
   request = '';
   response = '';
 
@@ -108,43 +110,59 @@ export class AppComponent {
   loadChart() {
     const formData = this.chartFormData;
     const measures = formData.measures.split('\n');
+    const options = this.getOptions();
+    const config: IMdxChartConfig = {
+      measures,
+      xAxisLevelExpression: formData.xAxis,
+      groupByLevelExpression: formData.groupBy ? formData.groupBy : undefined
+    };
 
     this.resetOutput();
+    this.showQuery({ config, options });
+
     this.createMdx()
-      .getChartData(
-        {
-          measures,
-          xAxisLevelExpression: formData.xAxis,
-          groupByLevelExpression: formData.groupBy ? formData.groupBy : undefined
-        },
-        this.getOptions()
-      )
-      .subscribe(chart => this.showResponse(chart), error => this.showResponse(error));
+      .getChartData(config, options)
+      .subscribe(
+        chart => this.showResponse(chart),
+        error => this.showResponse(error)
+      );
   }
 
   loadDimension() {
     const formData = this.dimensionFormData;
     const attributes = formData.attributes.split('\n');
     const measures = formData.measures ? formData.measures.split('\n') : undefined;
+    const options = {
+      ...this.getOptions(),
+      measures
+    };
 
     this.resetOutput();
+    this.showQuery({ attributes, options });
+
     this.createMdx()
-      .getDimensionData(attributes, {
-        ...this.getOptions(),
-        measures
-      })
-      .subscribe(result => this.showResponse(result), error => this.showResponse(error));
+      .getDimensionData(attributes, options)
+      .subscribe(
+        result => this.showResponse(result),
+        error => this.showResponse(error)
+      );
   }
 
   loadTableRows() {
     const formData = this.tableRowFormData;
     const measures = formData.measures.split('\n');
     const rows = formData.rows.split('\n');
+    const options = this.getOptions();
 
     this.resetOutput();
+    this.showQuery({ measures, rows, options });
+
     this.createMdx()
-      .getTableRowData(measures, rows, this.getOptions())
-      .subscribe(result => this.showResponse(result), error => this.showResponse(error));
+      .getTableRowData(measures, rows, options)
+      .subscribe(
+        result => this.showResponse(result),
+        error => this.showResponse(error)
+      );
   }
 
   private createMdx(): Mdx {
@@ -231,8 +249,13 @@ export class AppComponent {
   }
 
   private resetOutput() {
+    this.query = 'Loading...';
     this.request = 'Loading...';
     this.response = 'Loading...';
+  }
+
+  private showQuery(value: any) {
+    this.query = JSON.stringify(value, undefined, 2);
   }
 
   private showResponse(value: any) {
