@@ -9,6 +9,7 @@ export interface IMdxFilter {
   comparisonOperator?: MdxComparisonOperator;
   comparisonValue?: MdxValue;
   includeAll?: boolean;
+  includeTotalCount?: boolean;
   memberKeys?: MdxValue[];
 }
 

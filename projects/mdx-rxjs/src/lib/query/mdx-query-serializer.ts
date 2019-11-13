@@ -15,8 +15,8 @@ export class MdxQuerySerializer {
       throw Error('Invalid dimension query. At least one attribute must be specified.');
     }
 
-    const attributeKey = '[queryAttributes]';
-    const measureKey = '[queryMeasures]';
+    const attributeKey = '[_attributeSet]';
+    const measureKey = '[_measureSet]';
     const isNonEmptyKey = '[Measures].[_isNonEmpty]';
 
     const isNonEmpty = new MdxMemberExpression(isNonEmptyKey);
@@ -64,8 +64,9 @@ export class MdxQuerySerializer {
         .defineMember(isNonEmptyKey, 1, 'Is Non-Empty');
     }
 
-    if (query.includeTotalCount) {
-      columnAxis = this.defineTotalCount(queryBuilder, columnAxis, rowAxis);
+    const totalCountSetExpression = factory.getTotalCountSetExpression();
+    if (totalCountSetExpression) {
+      columnAxis = this.defineTotalCount(queryBuilder, columnAxis, totalCountSetExpression);
     }
 
     rowAxis = factory.extendSetWithSortOptions(rowAxis, query);
@@ -86,8 +87,8 @@ export class MdxQuerySerializer {
     const measures = query.measures != null ? MdxLevelExpression.fromMeasures(query.measures) : [];
     const rows = query.rows != null ? MdxLevelExpression.fromAttributes(query.rows) : [];
 
-    const columnKey = '[queryColumns]';
-    const measureKey = '[queryMeasures]';
+    const columnKey = '[_columnSet]';
+    const measureKey = '[_measureSet]';
     let columnAxis: MdxSetExpression;
 
     const factory = new MdxExpressionFactory(columns.concat(rows), query);
@@ -108,19 +109,23 @@ export class MdxQuerySerializer {
       throw Error('Invalid table query. At least one column or measure must be specified.');
     }
 
+    const totalCountSetExpression = factory.getTotalCountSetExpression();
+    if (totalCountSetExpression) {
+      columnAxis = this.defineTotalCount(
+        queryBuilder,
+        columnAxis,
+        measures.length > 0 ? totalCountSetExpression.nonEmpty(measureKey) : totalCountSetExpression
+      );
+    }
+
     if (rows.length > 0) {
-      const rowKey = '[queryRows]';
+      const rowKey = '[_rowSet]';
       const rowAxis = new MdxSetExpression(rowKey);
       queryBuilder.defineSet(
         rowKey,
-        factory.createSetFromSortOptions(rows, query, lowestInclusiveSet => {
-          const rowSet = measures.length > 0 ? lowestInclusiveSet.nonEmpty(measureKey) : lowestInclusiveSet;
-          if (query.includeTotalCount) {
-            columnAxis = this.defineTotalCount(queryBuilder, columnAxis, rowSet);
-          }
-
-          return rowSet;
-        })
+        factory.createSetFromSortOptions(rows, query, lowestInclusiveSet =>
+          measures.length > 0 ? lowestInclusiveSet.nonEmpty(measureKey) : lowestInclusiveSet
+        )
       );
 
       queryBuilder.onColumns(columnAxis).onRows(rowAxis);
@@ -135,11 +140,18 @@ export class MdxQuerySerializer {
       .toStatement();
   }
 
-  private defineTotalCount(queryBuilder: MdxQueryBuilder, columnAxis: MdxSetExpression, rowAxis: MdxSetExpression): MdxSetExpression {
-    const totalCount = new MdxMemberExpression('[Measures].[_totalCount]');
-    queryBuilder.defineMember(totalCount.expression, rowAxis.count(), 'Total Count');
+  private defineTotalCount(
+    queryBuilder: MdxQueryBuilder,
+    columnAxis: MdxSetExpression,
+    totalCountSetExpression: MdxSetExpression
+  ): MdxSetExpression {
+    const totalCountSet = new MdxSetExpression('[_totalCountSet]');
+    queryBuilder.defineSet(totalCountSet.expression, totalCountSetExpression);
 
-    return columnAxis.union(totalCount.asSet());
+    const totalCountMember = new MdxMemberExpression('[Measures].[_totalCount]');
+    queryBuilder.defineMember(totalCountMember.expression, totalCountSet.count(), 'Total Count');
+
+    return columnAxis.union(totalCountMember.asSet());
   }
 
   private getAttributesWithOrderBy(attributes: string[], options: IMdxSortOptions): string[] {

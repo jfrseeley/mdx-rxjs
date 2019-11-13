@@ -6,10 +6,12 @@ import { IMdxSortOptions } from './models/mdx-sort-options';
 export class MdxExpressionFactory {
   readonly queryAxisFilters: Map<string, IMdxFilter>;
   readonly slicerAxisFilters: Map<string, IMdxFilter>;
+  readonly totalCountLevelExpressions: Set<string>;
 
   constructor(attributes: MdxLevelExpression[], readonly options: IMdxFilterOptions) {
     this.queryAxisFilters = new Map<string, IMdxFilter>();
     this.slicerAxisFilters = new Map<string, IMdxFilter>();
+    this.totalCountLevelExpressions = new Set<string>();
 
     if (options.filters) {
       for (const filter of options.filters) {
@@ -22,6 +24,10 @@ export class MdxExpressionFactory {
     for (const attribute of attributes) {
       const filter: IMdxFilter = this.slicerAxisFilters.get(attribute.expression) || { levelExpression: attribute.expression };
       this.slicerAxisFilters.delete(attribute.expression);
+
+      if (filter.includeTotalCount) {
+        this.totalCountLevelExpressions.add(attribute.expression);
+      }
 
       if (!this.queryAxisFilters.set(attribute.expression, filter)) {
         throw new Error(`Invalid attribute ${attribute} detected. It may not be defined more than once.`);
@@ -52,14 +58,15 @@ export class MdxExpressionFactory {
     let pendingSets: MdxSetExpression[] = [];
     let attributesToExtract: MdxLevelExpression[] = [];
 
-    if (!options.orderBy || options.orderBy.length === 0) {
+    const inclusiveLevelExpressions = this.getInclusiveLevelExpressions(options);
+    if (inclusiveLevelExpressions.length === 0) {
       lowestInclusiveSet = this.createSetFromAttributes(attributes);
     } else {
       const unmatchedAttributes = new Map<string, MdxLevelExpression>();
-      for (const orderBy of options.orderBy) {
-        const level = new MdxLevelExpression(orderBy.levelExpression);
+      for (const inclusiveLevelExpression of inclusiveLevelExpressions) {
+        const level = new MdxLevelExpression(inclusiveLevelExpression);
         if (!level.isMeasure()) {
-          unmatchedAttributes.set(orderBy.levelExpression, level);
+          unmatchedAttributes.set(inclusiveLevelExpression, level);
         }
       }
 
@@ -114,7 +121,7 @@ export class MdxExpressionFactory {
   extendSetWithSortOptions(set: MdxSetExpression, options: IMdxSortOptions): MdxSetExpression {
     let cumulativeSet = set;
     if (options.orderBy) {
-      for (let index = 0; index > -1; index--) {
+      for (let index = options.orderBy.length - 1; index > -1; index--) {
         const nextOrderBy = options.orderBy[index];
         if (nextOrderBy.levelExpression == null) {
           continue;
@@ -144,6 +151,12 @@ export class MdxExpressionFactory {
     return this.convertAxisFilters(this.slicerAxisFilters);
   }
 
+  getTotalCountSetExpression(): MdxSetExpression | null {
+    return this.totalCountLevelExpressions.size > 0
+      ? this.createSetFromAttributes(MdxLevelExpression.fromAttributes(Array.from(this.totalCountLevelExpressions)))
+      : null;
+  }
+
   private convertAxisFilters(filters: Map<string, IMdxFilter>): MdxSetExpression | null {
     const axisFilters: MdxSetExpression[] = [];
     for (const filter of filters.values()) {
@@ -164,5 +177,13 @@ export class MdxExpressionFactory {
     }
 
     return axisFilters.length > 0 ? MdxSetExpression.fromSets(axisFilters) : null;
+  }
+
+  private getInclusiveLevelExpressions(options: IMdxSortOptions): string[] {
+    return options.orderBy && options.orderBy.length > 0
+      ? Array.from(
+          new Set<string>([...options.orderBy.map(o => o.levelExpression), ...this.totalCountLevelExpressions])
+        )
+      : Array.from(this.totalCountLevelExpressions);
   }
 }

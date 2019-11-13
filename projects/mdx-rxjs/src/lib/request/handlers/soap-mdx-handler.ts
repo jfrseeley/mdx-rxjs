@@ -53,13 +53,13 @@ export class SoapMdxHandler extends XmlMdxHandler {
                 subscriber.next(response);
               } else {
                 const error = this.deserializeErrors(xhr.responseXML) || this.deserializeFault(xhr.responseXML) || xhr.response;
-                subscriber.error(error);
+                subscriber.error(error || 'Encountered an unexpected MDX error. No response was provided.');
               }
             }
 
             subscriber.complete();
           } else {
-            subscriber.error(xhr.response);
+            subscriber.error(xhr.response || 'Encountered an unexpected MDX error. No response was provided.');
           }
         }
       };

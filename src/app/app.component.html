@@ -1,104 +1,199 @@
-<h1>General Configuration</h1>
-<form [formGroup]="mdxForm">
-  <div class="flex">
-    <div class="flex-1">
-      <div>
-        <label>Cube</label>
-        <input type="text" formControlName="cube" required="required" />
-      </div>
-      <div>
-        <label>Catalog</label>
-        <input type="text" formControlName="catalog" required="required" />
-      </div>
-      <div>
-        <label>Url</label>
-        <input type="url" formControlName="url" required="required" />
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12"><h1>MDX Test Harness</h1></div>
+  </div>
+  <div class="row">
+    <div class="col-12 col-lg-8">
+      <h2>General Configuration</h2>
+      <form [formGroup]="mdxForm">
+        <div class="form-row">
+          <div class="col-12 col-md-4">
+            <label for="mdx-cube">Cube</label>
+            <input id="mdx-cube" type="text" class="form-control" formControlName="cube" required="required" />
+          </div>
+          <div class="col-12 col-md-4">
+            <label for="mdx-catalog">Catalog</label>
+            <input id="mdx-catalog" type="text" class="form-control" formControlName="catalog" required="required" />
+          </div>
+          <div class="col-12 col-md-4">
+            <label for="mdx-url">Url</label>
+            <input id="mdx-url" type="url" class="form-control" formControlName="url" required="required" />
+          </div>
+          <div class="col-6 col-md-4">
+            <label for="mdx-skip">Skip</label>
+            <input id="mdx-skip" type="number" class="form-control" formControlName="skip" />
+          </div>
+          <div class="col-6 col-md-4">
+            <label for="mdx-top">Top</label>
+            <input id="mdx-top" type="number" class="form-control" formControlName="top" />
+          </div>
+        </div>
+        <div class="my-3" formArrayName="filters">
+          <div class="d-flex justify-content-between">
+            <h4>Filters</h4>
+            <button type="button" class="btn btn-secondary btn-sm" (click)="addFilter()">Add</button>
+          </div>
+          <div class="card" *ngFor="let filter of mdxFormFilters.controls; let filterIndex = index">
+            <div class="card-body" [formGroupName]="filterIndex">
+              <div class="form-row">
+                <div class="col-12 col-lg-4">
+                  <label [for]="'levelExpression' + filterIndex">Level Expression</label>
+                  <input
+                    [id]="'levelExpression' + filterIndex"
+                    type="text"
+                    class="form-control"
+                    formControlName="levelExpression"
+                    required="required"
+                  />
+                </div>
+                <div class="col-12 col-lg-4">
+                  <label [for]="'comparisonOperator' + filterIndex">Comparison Operator</label>
+                  <input [id]="'comparisonOperator' + filterIndex" type="text" class="form-control" formControlName="comparisonOperator" />
+                </div>
+                <div class="col-12 col-lg-4">
+                  <label [for]="'comparisonValue' + filterIndex">Comparison Value</label>
+                  <input [id]="'comparisonValue' + filterIndex" type="text" class="form-control" formControlName="comparisonValue" />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="col-12 col-lg-4">
+                  <label [for]="'sortDirection' + filterIndex">Sort Direction</label>
+                  <input [id]="'sortDirection' + filterIndex" type="text" class="form-control" formControlName="sortDirection" />
+                </div>
+                <div class="col-12 col-lg-4">
+                  <div class="form-group form-check">
+                    <input [id]="'includeAll' + filterIndex" type="checkbox" class="form-check-input" formControlName="includeAll" />
+                    <label [for]="'includeAll' + filterIndex">Include All</label>
+                  </div>
+                </div>
+                <div class="col-12 col-lg-4">
+                  <div class="form-group form-check">
+                    <input
+                      [id]="'includeTotalCount' + filterIndex"
+                      type="checkbox"
+                      class="form-check-input"
+                      formControlName="includeTotalCount"
+                    />
+                    <label [for]="'includeTotalCount' + filterIndex">Include Total Count</label>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label [for]="'memberKeys' + filterIndex">Member Keys</label>
+                <textarea [id]="'memberKeys' + filterIndex" class="form-control" formControlName="memberKeys" rows="5"></textarea>
+              </div>
+              <div class="form-group">
+                <button type="button" class="btn btn-danger btn-sm" (click)="removeFilter(filterIndex)">Remove</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+      <hr />
+      <div class="row">
+        <div class="col-12 col-lg-4">
+          <h3>Chart</h3>
+          <form [formGroup]="chartForm" (ngSubmit)="loadChart()">
+            <div class="form-group">
+              <label for="chart-measures">Measures</label>
+              <textarea id="chart-measures" class="form-control" formControlName="measures" required="required" rows="5"></textarea>
+            </div>
+            <div class="form-group">
+              <label for="chart-xAxis">X-Axis Level Expression</label>
+              <input id="chart-xAxis" type="text" class="form-control" formControlName="xAxis" required="required" />
+            </div>
+            <div class="form-group">
+              <label for="chart-groupBy">Group By Level Expression</label>
+              <input id="chart-groupBy" type="text" class="form-control" formControlName="groupBy" />
+            </div>
+
+            <button type="submit" class="btn btn-primary" [disabled]="!mdxForm.valid || !chartForm.valid">Load</button>
+          </form>
+        </div>
+        <div class="col-12 col-lg-4">
+          <h3>Dimension</h3>
+          <form [formGroup]="dimensionForm" (ngSubmit)="loadDimension()">
+            <div class="form-group">
+              <label for="dimension-attributes">Attributes</label>
+              <textarea id="dimension-attributes" class="form-control" formControlName="attributes" required="required" rows="5"></textarea>
+            </div>
+            <div class="form-group">
+              <label for="dimension-measures">Measures</label>
+              <textarea id="dimension-measures" class="form-control" formControlName="measures" rows="5"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary" [disabled]="!mdxForm.valid || !dimensionForm.valid">Load</button>
+          </form>
+        </div>
+        <div class="col-12 col-lg-4">
+          <h3>Table Rows</h3>
+          <form [formGroup]="tableRowForm" (ngSubmit)="loadTableRows()">
+            <div class="form-group">
+              <label for="table-measures">Measures</label>
+              <textarea id="table-measures" class="form-control" formControlName="measures" required="required" rows="5"></textarea>
+            </div>
+            <div class="form-group">
+              <label for="table-rows">Rows</label>
+              <textarea id="table-rows" class="form-control" formControlName="rows" required="required" rows="5"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary" [disabled]="!mdxForm.valid || !tableRowForm.valid">Load</button>
+          </form>
+        </div>
       </div>
     </div>
-    <div class="flex-1">
-      <div>
-        <label>Skip</label>
-        <input type="number" formControlName="skip" />
-      </div>
-      <div>
-        <label>Top</label>
-        <input type="number" formControlName="top" />
-      </div>
-      <div>
-        <label>Include Total Count</label>
-        <input type="checkbox" formControlName="includeTotalCount" />
+    <div class="col-12 col-lg-4">
+      <h2>Data</h2>
+      <ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+          <a id="query-tab" class="nav-link active" href="#query" data-toggle="tab" role="tab" aria-controls="query" aria-selected="true"
+            >Query</a
+          >
+        </li>
+        <li class="nav-item">
+          <a id="request-tab" class="nav-link" href="#request" data-toggle="tab" role="tab" aria-controls="request" aria-selected="false"
+            >Request</a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            id="responseData-tab"
+            class="nav-link"
+            href="#responseData"
+            data-toggle="tab"
+            role="tab"
+            aria-controls="responseData"
+            aria-selected="false"
+            >Response Data</a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            id="responseModel-tab"
+            class="nav-link"
+            href="#responseModel"
+            data-toggle="tab"
+            role="tab"
+            aria-controls="responseModel"
+            aria-selected="false"
+            >Response Model</a
+          >
+        </li>
+      </ul>
+      <div class="tab-content">
+        <div id="query" class="tab-pane fade show active" role="tabpanel" aria-labelledby="query-tab">
+          <pre><code>{{ query }}</code></pre>
+        </div>
+        <div id="request" class="tab-pane fade" role="tabpanel" aria-labelledby="request-tab">
+          <pre><code>{{ request }}</code></pre>
+        </div>
+        <div id="responseData" class="tab-pane fade" role="tabpanel" aria-labelledby="responseData-tab">
+          <pre><code>{{ responseData }}</code></pre>
+        </div>
+        <div id="responseModel" class="tab-pane fade" role="tabpanel" aria-labelledby="responseModel-tab">
+          <pre><code>{{ responseModel }}</code></pre>
+        </div>
       </div>
     </div>
-    <div class="flex-1">
-      <div>
-        <label>Filters</label>
-        <textarea formControlName="filters" rows="5"></textarea>
-      </div>
-      <div>
-        <label>Order By</label>
-        <textarea formControlName="orderBy" rows="5"></textarea>
-      </div>
-    </div>
-  </div>
-</form>
-
-<div class="flex">
-  <div class="flex-1">
-    <h2>Chart</h2>
-    <form [formGroup]="chartForm" (ngSubmit)="loadChart()">
-      <div>
-        <label>Measures</label>
-        <textarea formControlName="measures" required="required" rows="5"></textarea>
-      </div>
-      <div>
-        <label>X-Axis Level Expression</label>
-        <input type="text" formControlName="xAxis" required="required" />
-      </div>
-      <div>
-        <label>Group By Level Expression</label>
-        <input type="text" formControlName="groupBy" />
-      </div>
-
-      <button type="submit" [disabled]="!mdxForm.valid || !chartForm.valid">Load</button>
-    </form>
-  </div>
-  <div class="flex-1">
-    <h2>Dimension</h2>
-    <form [formGroup]="dimensionForm" (ngSubmit)="loadDimension()">
-      <div>
-        <label>Attributes</label>
-        <textarea formControlName="attributes" required="required" rows="5"></textarea>
-      </div>
-      <div>
-        <label>Measures</label>
-        <textarea formControlName="measures" rows="5"></textarea>
-      </div>
-
-      <button type="submit" [disabled]="!mdxForm.valid || !dimensionForm.valid">Load</button>
-    </form>
-  </div>
-  <div class="flex-1">
-    <h2>Table Rows</h2>
-    <form [formGroup]="tableRowForm" (ngSubmit)="loadTableRows()">
-      <div>
-        <label>Measures</label>
-        <textarea formControlName="measures" required="required" rows="5"></textarea>
-      </div>
-      <div>
-        <label>Rows</label>
-        <textarea formControlName="rows" required="required" rows="5"></textarea>
-      </div>
-
-      <button type="submit" [disabled]="!mdxForm.valid || !tableRowForm.valid">Load</button>
-    </form>
   </div>
 </div>
-
-<h2>Query</h2>
-<pre>{{ query }}</pre>
-
-<h2>Request</h2>
-<pre>{{ request }}</pre>
-
-<h2>Response</h2>
-<pre>{{ response }}</pre>

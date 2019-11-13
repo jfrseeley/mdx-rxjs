@@ -38,11 +38,14 @@ export class Mdx {
       rows: config.groupByLevelExpression ? [config.xAxisLevelExpression, config.groupByLevelExpression] : [config.xAxisLevelExpression]
     };
 
-    const includeTotals = (query.filters && query.filters.some(f => f.includeAll)) || false;
+    const includeAll = (query.filters && query.filters.some(f => f.includeAll)) || false;
+    const includeTotalCount = (query.filters && query.filters.some(f => f.includeTotalCount)) || false;
     return this.postTableQuery(query).pipe(
       map(response => {
-        const columnTuples = response.getColumnAxis().tuples;
+        const columnAxis = response.getColumnAxis();
+        const columnTuples = columnAxis.tuples;
         const rowTuples = response.getRowAxis().tuples;
+        const totalCountLevelExpression = includeTotalCount ? columnAxis.lastTuple().firstMember().levelExpression : null;
 
         const xAxis = new Set<NonNullable<MdxValue>>();
         let seriesNameSet = new Set<string>();
@@ -58,7 +61,7 @@ export class Mdx {
 
         if (seriesNameSet.size === 0) {
           seriesNameSet.add(MdxMemberSet.Default);
-          if (includeTotals) {
+          if (includeAll) {
             seriesNameSet.add(MdxMemberSet.All);
           }
         }
@@ -68,13 +71,15 @@ export class Mdx {
         const seriesNames = Array.from(seriesNameSet.keys()).sort();
         for (const columnTuple of columnTuples) {
           const measure = columnTuple.firstMember();
-          measures.push(measure.levelExpression);
+          if (measure.levelExpression !== totalCountLevelExpression) {
+            measures.push(measure.levelExpression);
 
-          const seriesGroup: IMdxChartSeriesGroup = {};
-          data[measure.levelExpression] = seriesGroup;
+            const seriesGroup: IMdxChartSeriesGroup = {};
+            data[measure.levelExpression] = seriesGroup;
 
-          for (const seriesName of seriesNames) {
-            seriesGroup[seriesName] = [];
+            for (const seriesName of seriesNames) {
+              seriesGroup[seriesName] = [];
+            }
           }
         }
 
@@ -96,6 +101,7 @@ export class Mdx {
           }
         };
 
+        let totalSeriesGroups: number | null = null;
         if (rowTuples.length > 0) {
           let dataIndex = 0;
           let previousXAxis: IMdxMember | null = null;
@@ -109,6 +115,9 @@ export class Mdx {
 
             const seriesName = getSeriesName(rowTuple.members);
             addMeasureValues(seriesName, () => response.getCellValue(dataIndex++));
+            if (includeTotalCount) {
+              totalSeriesGroups = response.getCellValue(dataIndex++) as number;
+            }
 
             seriesNameSet.delete(seriesName);
             previousXAxis = currentXAxis;
@@ -117,7 +126,15 @@ export class Mdx {
           seriesNameSet.forEach(sn => addMeasureValues(sn, () => null));
         }
 
-        return new MdxChart(data, measures, seriesNames, Array.from(xAxis));
+        return new MdxChart(
+          data,
+          measures,
+          seriesNames,
+          Array.from(xAxis),
+          seriesNameSet.has(MdxMemberSet.Default),
+          seriesNameSet.has(MdxMemberSet.All),
+          totalSeriesGroups
+        );
       })
     );
   }
@@ -128,7 +145,7 @@ export class Mdx {
       attributes
     };
 
-    const includeTotalCount = query.includeTotalCount || false;
+    const includeTotalCount = (query.filters && query.filters.some(f => f.includeTotalCount)) || false;
     return this.postDimensionQuery(query).pipe(
       map(response => {
         const dataRows: IMdxDimensionRow<IMdxAttributeData>[] = [];
@@ -161,12 +178,9 @@ export class Mdx {
         }
 
         const result: IMdxDimensionRowResult<IMdxAttributeData> = {
-          rows: dataRows
+          rows: dataRows,
+          totalCount: totalCount != null ? Number(totalCount) : null
         };
-
-        if (includeTotalCount) {
-          result.totalCount = totalCount ? Number(totalCount) : 0;
-        }
 
         return result;
       })
@@ -218,8 +232,8 @@ export class Mdx {
       rows
     };
 
-    const includeTotals = (query.filters && query.filters.some(f => f.includeAll)) || false;
-    const includeTotalCount = query.includeTotalCount || false;
+    const includeAll = (query.filters && query.filters.some(f => f.includeAll)) || false;
+    const includeTotalCount = (query.filters && query.filters.some(f => f.includeTotalCount)) || false;
     return this.postTableQuery(query).pipe(
       map(response => {
         const columnAxis = response.getColumnAxis();
@@ -271,23 +285,17 @@ export class Mdx {
 
         if (totals.length > 1) {
           throw Error('Invalid response. Multiple totals were provided.');
-        } else if (includeTotals && totals.length !== 1) {
+        } else if (includeAll && totals.length !== 1) {
           throw Error('Invalid response. Totals were not provided, but expected.');
-        } else if (!includeTotals && totals.length === 1) {
+        } else if (!includeAll && totals.length === 1) {
           throw Error('Invalid response. Totals were provided, but unexpected.');
         }
 
         const result: IMdxTableRowResult<IMdxTableRowData> = {
-          rows: dataRows
+          rows: dataRows,
+          totals: includeAll ? totals[0] : null,
+          totalCount: totalCount != null ? Number(totalCount) : null
         };
-
-        if (includeTotals) {
-          result.totals = totals[0];
-        }
-
-        if (includeTotalCount) {
-          result.totalCount = totalCount ? Number(totalCount) : 0;
-        }
 
         return result;
       })
@@ -329,7 +337,7 @@ export class Mdx {
 
         const dtoResult: IMdxTableRowResult<TRow> = {
           rows: dataResult.rows.map(mapDataToDto),
-          totals: dataResult.totals ? mapDataToDto(dataResult.totals) : undefined,
+          totals: dataResult.totals ? mapDataToDto(dataResult.totals) : null,
           totalCount: dataResult.totalCount
         };
 

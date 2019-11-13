@@ -19,6 +19,10 @@ export interface IMdxChart extends IMdxChartSelector {
   seriesNames: string[];
   xAxis: NonNullable<MdxValue>[];
 
+  hasDefaultSeries: boolean;
+  hasTotalSeries: boolean;
+  totalSeriesGroups: number | null;
+
   getSeries(measure: string, seriesName?: string): number[];
   getSeriesGroup(measure: string): IMdxChartSeriesGroup;
 }
@@ -28,15 +32,34 @@ export class MdxChart implements IMdxChart {
     readonly data: IMdxChartData,
     readonly measures: string[],
     readonly seriesNames: string[],
-    readonly xAxis: NonNullable<MdxValue>[]
+    readonly xAxis: NonNullable<MdxValue>[],
+    readonly hasDefaultSeries: boolean,
+    readonly hasTotalSeries: boolean,
+    readonly totalSeriesGroups: number | null
   ) {}
 
   filterMeasures(predicate: (measure: string, index: number, measures: string[]) => boolean): IMdxChartSelector {
-    return new MdxChart(this.data, this.measures.filter(predicate), this.seriesNames, this.xAxis);
+    return new MdxChart(
+      this.data,
+      this.measures.filter(predicate),
+      this.seriesNames,
+      this.xAxis,
+      this.hasDefaultSeries,
+      this.hasTotalSeries,
+      this.totalSeriesGroups
+    );
   }
 
   filterSeriesNames(predicate: (seriesName: string, index: number, seriesNames: string[]) => boolean): IMdxChartSelector {
-    return new MdxChart(this.data, this.measures, this.seriesNames.filter(predicate), this.xAxis);
+    return new MdxChart(
+      this.data,
+      this.measures,
+      this.seriesNames.filter(predicate),
+      this.xAxis,
+      this.hasDefaultSeries,
+      this.hasTotalSeries,
+      this.totalSeriesGroups
+    );
   }
 
   map<TSeries>(map: MapMdxSeriesDelegate<TSeries>): TSeries[] {
