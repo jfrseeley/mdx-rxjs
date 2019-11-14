@@ -16,7 +16,7 @@ stages:
 jobs:
   include:
     - stage: Build/Test
-    env: "PHASE=unit"
+      env: 'PHASE=unit'
     - env: 'PHASE=lint'
     - env: 'PHASE=build'
     - stage: Publish
