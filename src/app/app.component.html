@@ -62,19 +62,24 @@
                 </div>
                 <div class="col-12 col-lg-4">
                   <div class="form-group form-check">
-                    <input [id]="'includeAll' + filterIndex" type="checkbox" class="form-check-input" formControlName="includeAll" />
-                    <label [for]="'includeAll' + filterIndex">Include All</label>
+                    <input
+                      [id]="'includeAllAggregation' + filterIndex"
+                      type="checkbox"
+                      class="form-check-input"
+                      formControlName="includeAllAggregation"
+                    />
+                    <label [for]="'includeAllAggregation' + filterIndex">Include All Aggregation</label>
                   </div>
                 </div>
                 <div class="col-12 col-lg-4">
                   <div class="form-group form-check">
                     <input
-                      [id]="'includeTotalCount' + filterIndex"
+                      [id]="'includeInTotalCount' + filterIndex"
                       type="checkbox"
                       class="form-check-input"
-                      formControlName="includeTotalCount"
+                      formControlName="includeInTotalCount"
                     />
-                    <label [for]="'includeTotalCount' + filterIndex">Include Total Count</label>
+                    <label [for]="'includeInTotalCount' + filterIndex">Include in Total Count</label>
                   </div>
                 </div>
               </div>

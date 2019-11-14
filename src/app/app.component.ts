@@ -25,8 +25,8 @@ interface IMdxFormData {
     comparisonOperator: string | null;
     comparisonValue: string | null;
     sortDirection: string | null;
-    includeAll: boolean;
-    includeTotalCount: boolean;
+    includeAllAggregation: boolean;
+    includeInTotalCount: boolean;
     memberKeys: string | null;
   }[];
 }
@@ -119,8 +119,8 @@ export class AppComponent {
         comparisonOperator: [null],
         comparisonValue: [null],
         sortDirection: [null],
-        includeAll: [false],
-        includeTotalCount: [false],
+        includeAllAggregation: [false],
+        includeInTotalCount: [false],
         memberKeys: [null]
       })
     );
@@ -205,13 +205,13 @@ export class AppComponent {
     const filters: IMdxFilter[] = [];
     const orderBy: IMdxOrderBy[] = [];
     for (const rawFilter of formData.filters) {
-      if (rawFilter.comparisonOperator || rawFilter.includeAll || rawFilter.includeTotalCount || rawFilter.memberKeys) {
+      if (rawFilter.comparisonOperator || rawFilter.includeAllAggregation || rawFilter.includeInTotalCount || rawFilter.memberKeys) {
         filters.push({
           levelExpression: rawFilter.levelExpression,
           comparisonOperator: rawFilter.comparisonOperator ? (rawFilter.comparisonOperator as MdxComparisonOperator) : undefined,
           comparisonValue: rawFilter.comparisonValue ? rawFilter.comparisonValue : undefined,
-          includeAll: rawFilter.includeAll ? rawFilter.includeAll : undefined,
-          includeTotalCount: rawFilter.includeTotalCount ? rawFilter.includeTotalCount : undefined,
+          includeAllAggregation: rawFilter.includeAllAggregation ? rawFilter.includeAllAggregation : undefined,
+          includeInTotalCount: rawFilter.includeInTotalCount ? rawFilter.includeInTotalCount : undefined,
           memberKeys: rawFilter.memberKeys ? rawFilter.memberKeys.split('\n') : undefined
         });
       }

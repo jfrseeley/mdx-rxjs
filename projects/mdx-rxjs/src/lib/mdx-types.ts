@@ -8,8 +8,8 @@ export interface IMdxFilter {
   levelExpression: string;
   comparisonOperator?: MdxComparisonOperator;
   comparisonValue?: MdxValue;
-  includeAll?: boolean;
-  includeTotalCount?: boolean;
+  includeAllAggregation?: boolean;
+  includeInTotalCount?: boolean;
   memberKeys?: MdxValue[];
 }
 

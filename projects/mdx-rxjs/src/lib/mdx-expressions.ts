@@ -260,8 +260,8 @@ export class MdxLevelExpression extends MdxExpression implements MdxLevelExpress
     return MdxSetExpression.fromMembers(memberKeys.map(mk => this.member(mk)));
   }
 
-  set(includeAll?: boolean): MdxSetExpression {
-    return includeAll ? this.members() : this.children();
+  set(includeAllAggregation?: boolean): MdxSetExpression {
+    return includeAllAggregation ? this.members() : this.children();
   }
 
   value(): MdxValueExpression {

@@ -38,8 +38,8 @@ export class Mdx {
       rows: config.groupByLevelExpression ? [config.xAxisLevelExpression, config.groupByLevelExpression] : [config.xAxisLevelExpression]
     };
 
-    const includeAll = (query.filters && query.filters.some(f => f.includeAll)) || false;
-    const includeTotalCount = (query.filters && query.filters.some(f => f.includeTotalCount)) || false;
+    const includeAll = (query.filters && query.filters.some(f => f.includeAllAggregation)) || false;
+    const includeTotalCount = (query.filters && query.filters.some(f => f.includeInTotalCount)) || false;
     return this.postTableQuery(query).pipe(
       map(response => {
         const columnAxis = response.getColumnAxis();
@@ -145,7 +145,7 @@ export class Mdx {
       attributes
     };
 
-    const includeTotalCount = (query.filters && query.filters.some(f => f.includeTotalCount)) || false;
+    const includeTotalCount = (query.filters && query.filters.some(f => f.includeInTotalCount)) || false;
     return this.postDimensionQuery(query).pipe(
       map(response => {
         const dataRows: IMdxDimensionRow<IMdxAttributeData>[] = [];
@@ -232,8 +232,8 @@ export class Mdx {
       rows
     };
 
-    const includeAll = (query.filters && query.filters.some(f => f.includeAll)) || false;
-    const includeTotalCount = (query.filters && query.filters.some(f => f.includeTotalCount)) || false;
+    const includeAll = (query.filters && query.filters.some(f => f.includeAllAggregation)) || false;
+    const includeTotalCount = (query.filters && query.filters.some(f => f.includeInTotalCount)) || false;
     return this.postTableQuery(query).pipe(
       map(response => {
         const columnAxis = response.getColumnAxis();

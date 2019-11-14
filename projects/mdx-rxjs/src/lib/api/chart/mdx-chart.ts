@@ -21,7 +21,7 @@ export interface IMdxChart extends IMdxChartSelector {
 
   hasDefaultSeries: boolean;
   hasTotalSeries: boolean;
-  totalSeriesGroups: number | null;
+  totalCount: number | null;
 
   getSeries(measure: string, seriesName?: string): number[];
   getSeriesGroup(measure: string): IMdxChartSeriesGroup;
@@ -35,7 +35,7 @@ export class MdxChart implements IMdxChart {
     readonly xAxis: NonNullable<MdxValue>[],
     readonly hasDefaultSeries: boolean,
     readonly hasTotalSeries: boolean,
-    readonly totalSeriesGroups: number | null
+    readonly totalCount: number | null
   ) {}
 
   filterMeasures(predicate: (measure: string, index: number, measures: string[]) => boolean): IMdxChartSelector {
@@ -46,7 +46,7 @@ export class MdxChart implements IMdxChart {
       this.xAxis,
       this.hasDefaultSeries,
       this.hasTotalSeries,
-      this.totalSeriesGroups
+      this.totalCount
     );
   }
 
@@ -58,7 +58,7 @@ export class MdxChart implements IMdxChart {
       this.xAxis,
       this.hasDefaultSeries,
       this.hasTotalSeries,
-      this.totalSeriesGroups
+      this.totalCount
     );
   }
 

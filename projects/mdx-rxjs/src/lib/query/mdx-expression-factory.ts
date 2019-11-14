@@ -25,7 +25,7 @@ export class MdxExpressionFactory {
       const filter: IMdxFilter = this.slicerAxisFilters.get(attribute.expression) || { levelExpression: attribute.expression };
       this.slicerAxisFilters.delete(attribute.expression);
 
-      if (filter.includeTotalCount) {
+      if (filter.includeInTotalCount) {
         this.totalCountLevelExpressions.add(attribute.expression);
       }
 
@@ -41,7 +41,7 @@ export class MdxExpressionFactory {
       throw new Error(`Invalid attribute ${attribute} detected. It must belong to one of the axes.`);
     }
 
-    return attribute.set(filter.includeAll);
+    return attribute.set(filter.includeAllAggregation);
   }
 
   createSetFromAttributes(attributes: MdxLevelExpression[]): MdxSetExpression {
@@ -166,7 +166,7 @@ export class MdxExpressionFactory {
       }
 
       const level = new MdxLevelExpression(filter.levelExpression);
-      let filterSet = memberKeys.length > 0 ? level.select(memberKeys) : level.set(filter.includeAll);
+      let filterSet = memberKeys.length > 0 ? level.select(memberKeys) : level.set(filter.includeAllAggregation);
 
       if (filter.comparisonOperator) {
         const value = filter.comparisonValue != null ? filter.comparisonValue : null;
