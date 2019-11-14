@@ -16,11 +16,11 @@ stages:
 jobs:
   include:
     - stage: Build/Test
-      # env: "PHASE=unit"
-    - env: "PHASE=lint"
-    - env: "PHASE=build"
+    env: "PHASE=unit"
+    - env: 'PHASE=lint'
+    - env: 'PHASE=build'
     - stage: Publish
-      env: "PHASE=publish"
+      env: 'PHASE=publish'
 
 before_install:
   - dpkg --compare-versions `npm -v` ge 5.8 || npm i -g npm@^5.8

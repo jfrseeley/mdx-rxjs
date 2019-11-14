@@ -7,6 +7,7 @@
     "build": "ng build",
     "build:lib": "ng build mdx-rxjs",
     "test": "ng test",
+    "test:unit": "echo TODO: add tests via ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
   },
