@@ -4,7 +4,6 @@ import {
   Mdx,
   ProxyMdxHandler,
   SoapMdxHandler,
-  MdxValue,
   MdxComparisonOperator,
   MdxSortExpression,
   IMdxFilter,
