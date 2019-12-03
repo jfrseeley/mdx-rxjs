@@ -18,9 +18,10 @@ import { IMdxDimensionRowResult } from './api/dimension/mdx-dimension-row-result
 import { IMdxDimensionRow } from './api/dimension/mdx-dimension-row';
 import { IMdxTableRowData } from './api/table/mdx-table-row-data';
 import { IMdxTableRowResult } from './api/table/mdx-table-row-result';
-import { MdxVirtualRowBuilder } from './api/virtual-row/mdx-virtual-row-builder';
+import { MdxVirtualRowBuilder, GetMdxVirtualRowCellDelegate } from './api/virtual-row/mdx-virtual-row-builder';
 import { IMdxVirtualRowConfig } from './api/virtual-row/mdx-virtual-row-config';
-import { GetMdxVirtualRowCellDelegate } from './api/virtual-row/mdx-virtual-row';
+import { IMdxVirtualRow } from './api/virtual-row/mdx-virtual-row';
+import { MdxVirtualTableBuilder } from './api/virtual-row/mdx-virtual-table-builder';
 
 export interface IDimensionQueryOptions extends Pick<IMdxDimensionQuery, Exclude<keyof IMdxDimensionQuery, 'attributes'>> {}
 
@@ -346,11 +347,14 @@ export class Mdx {
     );
   }
 
-  getVirtualRowBuilder<TRowCell>(): MdxVirtualRowBuilder<TRowCell> {
-    return new MdxVirtualRowBuilder<TRowCell>((config, filters) => this.getVirtualRows(config, filters));
+  getVirtualTableBuilder<TRowCell, TExtendedProperties = any>(): MdxVirtualTableBuilder<TRowCell, TExtendedProperties> {
+    return new MdxVirtualTableBuilder<TRowCell, TExtendedProperties>((config, filters) => this.getVirtualRows(config, filters));
   }
 
-  private getVirtualRows<TRowCell>(config: IMdxVirtualRowConfig<TRowCell>, filters?: IMdxFilter[]): Observable<TRowCell[][]> {
+  private getVirtualRows<TRowCell, TExtendedProperties = any>(
+    config: IMdxVirtualRowConfig<TRowCell, TExtendedProperties>,
+    filters?: IMdxFilter[]
+  ): Observable<IMdxVirtualRow<TRowCell, TExtendedProperties>[]> {
     const query: IMdxTableQuery = {
       measures: config.measures,
       filters
@@ -373,12 +377,12 @@ export class Mdx {
           );
         }
 
-        const rows: TRowCell[][] = [];
+        const rows: IMdxVirtualRow<TRowCell, TExtendedProperties>[] = [];
         if (columnTuples.length > 0) {
           let dataIndex = 0;
           for (const virtualRow of config.rows) {
             const cells: TRowCell[] = [];
-            for (const virtualCell of virtualRow) {
+            for (const virtualCell of virtualRow.cells) {
               if (typeof virtualCell !== 'function') {
                 cells.push(virtualCell);
               } else {
@@ -388,7 +392,7 @@ export class Mdx {
               }
             }
 
-            rows.push(cells);
+            rows.push({ cells, extendedProperties: virtualRow.extendedProperties });
           }
         }
 

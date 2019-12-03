@@ -1,9 +1,12 @@
-import { GetMdxVirtualRowCellDelegate } from './mdx-virtual-row';
+import { GetMdxVirtualRowCellDelegate } from './mdx-virtual-row-builder';
 
 export type MdxVirtualCellDefinition<TRowCell> = TRowCell | GetMdxVirtualRowCellDelegate<TRowCell>;
-export type MdxVirtualRowDefinition<TRowCell> = MdxVirtualCellDefinition<TRowCell>[];
+export interface IMdxVirtualRowDefinition<TRowCell, TExtendedProperties = any> {
+  cells: MdxVirtualCellDefinition<TRowCell>[];
+  extendedProperties?: TExtendedProperties;
+}
 
-export interface IMdxVirtualRowConfig<TRowCell> {
+export interface IMdxVirtualRowConfig<TRowCell, TExtendedProperties = any> {
   measures: string[];
-  rows: MdxVirtualRowDefinition<TRowCell>[];
+  rows: IMdxVirtualRowDefinition<TRowCell, TExtendedProperties>[];
 }

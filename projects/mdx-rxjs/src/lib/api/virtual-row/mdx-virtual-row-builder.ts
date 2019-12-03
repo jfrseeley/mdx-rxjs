@@ -1,39 +1,25 @@
-import { IMdxFilter } from '../../mdx-types';
-import { MdxVirtualRowDefinition, IMdxVirtualRowConfig } from './mdx-virtual-row-config';
-import { GetMdxVirtualRowCellDelegate, IMdxVirtualRow } from './mdx-virtual-row';
-import { Observable } from 'rxjs';
+import { IMdxCell } from '../../request/models/mdx-cell';
+import { IMdxMember } from '../../request/models/mdx-member';
+import { MdxVirtualCellDefinition, IMdxVirtualRowDefinition } from './mdx-virtual-row-config';
+import { MdxVirtualTableBuilder } from './mdx-virtual-table-builder';
 
-export class MdxVirtualRowBuilder<TRowCell> implements IMdxVirtualRowConfig<TRowCell> {
-  readonly measures: string[];
-  readonly rows: MdxVirtualRowDefinition<TRowCell>[];
+export type GetMdxVirtualRowCellDelegate<TRowCell> = (data: IMdxCell, measure: IMdxMember) => TRowCell;
+export class MdxVirtualRowBuilder<TRowCell, TExtendedProperties = any> implements IMdxVirtualRowDefinition<TRowCell, TExtendedProperties> {
+  readonly cells: MdxVirtualCellDefinition<TRowCell>[] = [];
 
-  constructor(private readonly factory: (config: MdxVirtualRowBuilder<TRowCell>, filters?: IMdxFilter[]) => Observable<TRowCell[][]>) {
-    this.measures = [];
-    this.rows = [];
-  }
+  constructor(
+    private readonly table: MdxVirtualTableBuilder<TRowCell, TExtendedProperties>,
+    readonly extendedProperties?: TExtendedProperties
+  ) {}
 
-  addVirtualRow(setup: (row: IMdxVirtualRow<TRowCell>) => void): MdxVirtualRowBuilder<TRowCell> {
-    const measures = this.measures;
-    const rowDefinition: MdxVirtualRowDefinition<TRowCell> = [];
-    this.rows.push(rowDefinition);
-
-    const virtualRow: IMdxVirtualRow<TRowCell> = {
-      addMeasureCell(measure: string, getRowCell: GetMdxVirtualRowCellDelegate<TRowCell>) {
-        measures.push(measure);
-        rowDefinition.push(getRowCell);
-        return virtualRow;
-      },
-      addStaticCell(rowCell: TRowCell) {
-        rowDefinition.push(rowCell);
-        return virtualRow;
-      }
-    };
-
-    setup(virtualRow);
+  addMeasureCell(measure: string, getRowCell: GetMdxVirtualRowCellDelegate<TRowCell>): MdxVirtualRowBuilder<TRowCell, TExtendedProperties> {
+    this.table.measures.push(measure);
+    this.cells.push(getRowCell);
     return this;
   }
 
-  post(filters?: IMdxFilter[]): Observable<TRowCell[][]> {
-    return this.factory(this, filters);
+  addStaticCell(rowCell: TRowCell): MdxVirtualRowBuilder<TRowCell, TExtendedProperties> {
+    this.cells.push(rowCell);
+    return this;
   }
 }

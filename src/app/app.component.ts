@@ -50,6 +50,9 @@ const defaultAttribute = '[Dimension].[Level]';
 const defaultMeasure = '[Measures].[Level]';
 const defaultXAxis = '[Dimension].[Level]';
 
+const errorMessage = 'Error...';
+const loadingMessage = 'Loading...';
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -144,7 +147,7 @@ export class AppComponent {
       .getChartData(config, options)
       .subscribe(
         chart => this.showResponseModel(chart),
-        error => this.showResponseModel(error)
+        error => this.showError(error)
       );
   }
 
@@ -162,7 +165,7 @@ export class AppComponent {
       .getDimensionData(attributes, options)
       .subscribe(
         result => this.showResponseModel(result),
-        error => this.showResponseModel(error)
+        error => this.showError(error)
       );
   }
 
@@ -177,7 +180,7 @@ export class AppComponent {
       .getTableRowData(measures, rows, options)
       .subscribe(
         result => this.showResponseModel(result),
-        error => this.showResponseModel(error)
+        error => this.showError(error)
       );
   }
 
@@ -232,10 +235,10 @@ export class AppComponent {
   }
 
   private showQuery(value: any) {
-    this.query = JSON.stringify(value, undefined, 2);
-    this.request = 'Loading...';
-    this.responseData = 'Loading...';
-    this.responseModel = 'Loading...';
+    this.query = this.formatValue(value);
+    this.request = loadingMessage;
+    this.responseData = loadingMessage;
+    this.responseModel = loadingMessage;
   }
 
   private showRequest(mdxStatement: string) {
@@ -243,14 +246,33 @@ export class AppComponent {
   }
 
   private showResponseData(mdxResponse: IMdxResponse) {
-    this.responseData = JSON.stringify(mdxResponse, undefined, 2);
+    this.responseData = this.formatValue(mdxResponse);
   }
 
   private showResponseModel(value: any) {
-    if (value instanceof Error) {
-      this.responseModel = value.message;
+    this.responseModel = this.formatValue(value);
+  }
+
+  private showError(value: any) {
+    const formattedValue = this.formatValue(value);
+    if (this.query === loadingMessage) {
+      this.query = formattedValue;
+      this.request = errorMessage;
+      this.responseData = errorMessage;
+      this.responseModel = errorMessage;
+    } else if (this.request === loadingMessage) {
+      this.request = formattedValue;
+      this.responseData = errorMessage;
+      this.responseModel = errorMessage;
+    } else if (this.responseData === loadingMessage) {
+      this.responseData = formattedValue;
+      this.responseModel = errorMessage;
     } else {
-      this.responseModel = JSON.stringify(value, undefined, 2);
+      this.responseModel = formattedValue;
     }
+  }
+
+  private formatValue(value: any): string {
+    return value instanceof Error ? value.message : JSON.stringify(value, undefined, 2);
   }
 }
