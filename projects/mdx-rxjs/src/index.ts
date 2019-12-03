@@ -25,6 +25,7 @@ export * from './lib/api/table/mdx-table-row-result';
 export * from './lib/api/virtual-row/mdx-virtual-row-builder';
 export * from './lib/api/virtual-row/mdx-virtual-row-config';
 export * from './lib/api/virtual-row/mdx-virtual-row';
+export * from './lib/api/virtual-row/mdx-virtual-table-builder';
 
 /* Query */
 // export * from './lib/query/mdx-expression-factory';
