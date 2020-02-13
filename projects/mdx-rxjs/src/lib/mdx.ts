@@ -247,16 +247,21 @@ export class Mdx {
         let totalCount: MdxValue = null;
 
         if (rowTuples.length === 0) {
-          const emptyRow = {} as IMdxTableRowData;
-          for (const columnTuple of columnTuples) {
-            const measure = columnTuple.firstMember();
-            if (measure.levelExpression !== totalCountLevelExpression) {
-              emptyRow[measure.levelExpression] = 0;
+          if (includeAll) {
+            const emptyRow = {} as IMdxTableRowData;
+            for (const columnTuple of columnTuples) {
+              const measure = columnTuple.firstMember();
+              if (measure.levelExpression !== totalCountLevelExpression) {
+                emptyRow[measure.levelExpression] = 0;
+              }
             }
-          }
 
-          totals.push(emptyRow);
-          totalCount = 0;
+            totals.push(emptyRow);
+          }
+          
+          if (includeTotalCount) {
+            totalCount = 0;
+          }
         } else {
           let dataIndex = 0;
           for (const rowTuple of rowTuples) {
