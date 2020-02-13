@@ -258,7 +258,7 @@ export class Mdx {
 
             totals.push(emptyRow);
           }
-          
+
           if (includeTotalCount) {
             totalCount = 0;
           }
