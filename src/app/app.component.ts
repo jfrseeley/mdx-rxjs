@@ -9,7 +9,8 @@ import {
   IMdxFilter,
   IMdxOrderBy,
   IMdxQueryOptions,
-  IMdxChartConfig
+  IMdxChartConfig,
+  MdxDimensionQueryType,
 } from '../../projects/mdx-rxjs/src';
 import { IMdxResponse } from '../../dist/mdx-rxjs';
 
@@ -23,7 +24,7 @@ interface IMdxFormData {
     levelExpression: string;
     comparisonOperator: string | null;
     comparisonValue: string | null;
-    sortDirection: string | null;
+    sortDirection: MdxSortExpression | '' | null;
     includeAllAggregation: boolean;
     includeInTotalCount: boolean;
     memberKeys: string | null;
@@ -39,6 +40,7 @@ interface IChartFormData {
 interface IDimensionFormData {
   attributes: string;
   measures: string | null;
+  type: MdxDimensionQueryType | '' | null;
 }
 
 interface ITableRowFormData {
@@ -106,7 +108,8 @@ export class AppComponent {
     });
     this.dimensionForm = this.formBuilder.group({
       attributes: [defaultAttribute, Validators.required],
-      measures: [defaultMeasure]
+      measures: [defaultMeasure],
+      type: ['']
     });
     this.tableRowForm = this.formBuilder.group({
       measures: [defaultMeasure, Validators.required],
@@ -120,7 +123,7 @@ export class AppComponent {
         levelExpression: ['', Validators.required],
         comparisonOperator: [null],
         comparisonValue: [null],
-        sortDirection: [null],
+        sortDirection: [''],
         includeAllAggregation: [false],
         includeInTotalCount: [false],
         memberKeys: [null]
@@ -157,7 +160,8 @@ export class AppComponent {
     const measures = formData.measures ? formData.measures.split('\n') : undefined;
     const options = {
       ...this.getOptions(),
-      measures
+      measures,
+      type: formData.type ? formData.type : undefined
     };
 
     this.showQuery({ attributes, options });
@@ -221,7 +225,7 @@ export class AppComponent {
       if (rawFilter.sortDirection) {
         orderBy.push({
           levelExpression: rawFilter.levelExpression,
-          sortDirection: rawFilter.sortDirection.toLocaleUpperCase() as MdxSortExpression
+          sortDirection: rawFilter.sortDirection
         });
       }
     }
