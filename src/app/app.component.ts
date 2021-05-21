@@ -58,7 +58,7 @@ const loadingMessage = 'Loading...';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
   mdxForm: FormGroup;
@@ -75,7 +75,7 @@ export class AppComponent {
     return this.mdxForm.value;
   }
 
-  private get mdxFormFilters(): FormArray {
+  public get mdxFormFilters(): FormArray {
     return this.mdxForm.get('filters') as FormArray;
   }
 
@@ -98,22 +98,22 @@ export class AppComponent {
       url: ['http://localhost/olap/', Validators.required],
       skip: [null],
       top: [null],
-      filters: this.formBuilder.array([])
+      filters: this.formBuilder.array([]),
     });
 
     this.chartForm = this.formBuilder.group({
       measures: [defaultMeasure, Validators.required],
       xAxis: [defaultXAxis, Validators.required],
-      groupBy: [defaultAttribute]
+      groupBy: [defaultAttribute],
     });
     this.dimensionForm = this.formBuilder.group({
       attributes: [defaultAttribute, Validators.required],
       measures: [defaultMeasure],
-      type: ['']
+      type: [''],
     });
     this.tableRowForm = this.formBuilder.group({
       measures: [defaultMeasure, Validators.required],
-      rows: [defaultAttribute, Validators.required]
+      rows: [defaultAttribute, Validators.required],
     });
   }
 
@@ -126,7 +126,7 @@ export class AppComponent {
         sortDirection: [''],
         includeAllAggregation: [false],
         includeInTotalCount: [false],
-        memberKeys: [null]
+        memberKeys: [null],
       })
     );
   }
@@ -142,15 +142,15 @@ export class AppComponent {
     const config: IMdxChartConfig = {
       measures,
       xAxisLevelExpression: formData.xAxis,
-      groupByLevelExpression: formData.groupBy ? formData.groupBy : undefined
+      groupByLevelExpression: formData.groupBy ? formData.groupBy : undefined,
     };
 
     this.showQuery({ config, options });
     this.createMdx()
       .getChartData(config, options)
       .subscribe(
-        chart => this.showResponseModel(chart),
-        error => this.showError(error)
+        (chart) => this.showResponseModel(chart),
+        (error) => this.showError(error)
       );
   }
 
@@ -161,15 +161,15 @@ export class AppComponent {
     const options = {
       ...this.getOptions(),
       measures,
-      type: formData.type ? formData.type : undefined
+      type: formData.type ? formData.type : undefined,
     };
 
     this.showQuery({ attributes, options });
     this.createMdx()
       .getDimensionData(attributes, options)
       .subscribe(
-        result => this.showResponseModel(result),
-        error => this.showError(error)
+        (result) => this.showResponseModel(result),
+        (error) => this.showError(error)
       );
   }
 
@@ -183,8 +183,8 @@ export class AppComponent {
     this.createMdx()
       .getTableRowData(measures, rows, options)
       .subscribe(
-        result => this.showResponseModel(result),
-        error => this.showError(error)
+        (result) => this.showResponseModel(result),
+        (error) => this.showError(error)
       );
   }
 
@@ -194,11 +194,11 @@ export class AppComponent {
       formData.cube,
       new ProxyMdxHandler(
         new SoapMdxHandler(formData.catalog, formData.url),
-        mdxStatement => {
+        (mdxStatement) => {
           this.showRequest(mdxStatement);
           return mdxStatement;
         },
-        mdxResponse => {
+        (mdxResponse) => {
           this.showResponseData(mdxResponse);
           return mdxResponse;
         }
@@ -218,14 +218,14 @@ export class AppComponent {
           comparisonValue: rawFilter.comparisonValue ? rawFilter.comparisonValue : undefined,
           includeAllAggregation: rawFilter.includeAllAggregation ? rawFilter.includeAllAggregation : undefined,
           includeInTotalCount: rawFilter.includeInTotalCount ? rawFilter.includeInTotalCount : undefined,
-          memberKeys: rawFilter.memberKeys ? rawFilter.memberKeys.split('\n') : undefined
+          memberKeys: rawFilter.memberKeys ? rawFilter.memberKeys.split('\n') : undefined,
         });
       }
 
       if (rawFilter.sortDirection) {
         orderBy.push({
           levelExpression: rawFilter.levelExpression,
-          sortDirection: rawFilter.sortDirection
+          sortDirection: rawFilter.sortDirection,
         });
       }
     }
@@ -234,7 +234,7 @@ export class AppComponent {
       filters: filters.length > 0 ? filters : undefined,
       orderBy: orderBy.length > 0 ? orderBy : undefined,
       skip: formData.skip != null ? formData.skip : undefined,
-      top: formData.top != null ? formData.top : undefined
+      top: formData.top != null ? formData.top : undefined,
     };
   }
 
