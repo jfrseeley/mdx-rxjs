@@ -83,7 +83,7 @@ export class MdxValueExpression extends MdxExpression {
       case 1:
         return this.getExpressionType(values[0]);
       default:
-        const types = values.map(v => this.getExpressionType(v));
+        const types = values.map((v) => this.getExpressionType(v));
         return new Set(types).size === 1 ? types[0] : 'stringOrNumeric';
     }
   }
@@ -196,7 +196,7 @@ export class MdxMemberExpression extends MdxValueExpression implements MdxMember
 export class MdxLevelExpression extends MdxExpression implements MdxLevelExpression {
   static fromAttributes(attributes: string[]) {
     const unique = new Set<string>();
-    return attributes.map(a => {
+    return attributes.map((a) => {
       const level = new MdxLevelExpression(a);
       if (!level.isValid()) {
         throw new Error(`Invalid attribute ${a} detected. It must be a level expression.`);
@@ -216,7 +216,7 @@ export class MdxLevelExpression extends MdxExpression implements MdxLevelExpress
 
   static fromMeasures(measures: string[]) {
     const unique = new Set<string>();
-    return measures.map(m => {
+    return measures.map((m) => {
       const level = new MdxLevelExpression(m);
       if (!level.isValid()) {
         throw new Error(`Invalid measure ${m} detected. It must be a level expression.`);
@@ -257,7 +257,7 @@ export class MdxLevelExpression extends MdxExpression implements MdxLevelExpress
   }
 
   select(memberKeys: MdxValue[]): MdxSetExpression {
-    return MdxSetExpression.fromMembers(memberKeys.map(mk => this.member(mk)));
+    return MdxSetExpression.fromMembers(memberKeys.map((mk) => this.member(mk)));
   }
 
   set(includeAllAggregation?: boolean): MdxSetExpression {

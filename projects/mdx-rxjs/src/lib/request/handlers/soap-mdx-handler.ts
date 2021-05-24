@@ -23,7 +23,7 @@ export class SoapMdxHandler extends XmlMdxHandler {
         default:
           return '';
       }
-    }
+    },
   };
 
   constructor(private readonly catalog: string, private readonly url: string) {
@@ -31,7 +31,7 @@ export class SoapMdxHandler extends XmlMdxHandler {
   }
 
   post(mdxStatement: string): Observable<IMdxResponse> {
-    return new Observable(subscriber => {
+    return new Observable((subscriber) => {
       const xhr = new XMLHttpRequest();
       xhr.withCredentials = true;
       xhr.open('POST', this.url, true);

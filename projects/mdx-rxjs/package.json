@@ -1,6 +1,6 @@
 {
   "name": "@healthcatalyst/mdx-rxjs",
-  "version": "0.0.4-beta",
+  "version": "0.0.5-beta",
   "peerDependencies": {
     "rxjs": "^6.5.2"
   },

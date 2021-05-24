@@ -11,6 +11,6 @@ export class ProxyMdxHandler implements IMdxHandler {
   ) {}
 
   post(mdxStatement: string): Observable<IMdxResponse> {
-    return this.handler.post(this.requestInterceptor(mdxStatement)).pipe(map(response => this.responseInterceptor(response)));
+    return this.handler.post(this.requestInterceptor(mdxStatement)).pipe(map((response) => this.responseInterceptor(response)));
   }
 }

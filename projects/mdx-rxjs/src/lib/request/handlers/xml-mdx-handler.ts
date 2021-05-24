@@ -87,7 +87,7 @@ export abstract class XmlMdxHandler implements IMdxHandler {
 
     return {
       value,
-      valueFormatted
+      valueFormatted,
     };
   }
 
@@ -100,7 +100,7 @@ export abstract class XmlMdxHandler implements IMdxHandler {
         while (cellOrdinal > cells.length) {
           cells.push({
             value: null,
-            valueFormatted: null
+            valueFormatted: null,
           });
         }
 
@@ -112,7 +112,7 @@ export abstract class XmlMdxHandler implements IMdxHandler {
     while (trailingEmptyCellCount-- > 0) {
       cells.push({
         value: null,
-        valueFormatted: null
+        valueFormatted: null,
       });
     }
 

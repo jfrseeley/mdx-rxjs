@@ -18,7 +18,7 @@ import { IMdxDimensionRowResult } from './api/dimension/mdx-dimension-row-result
 import { IMdxDimensionRow } from './api/dimension/mdx-dimension-row';
 import { IMdxTableRowData } from './api/table/mdx-table-row-data';
 import { IMdxTableRowResult } from './api/table/mdx-table-row-result';
-import { MdxVirtualRowBuilder, GetMdxVirtualRowCellDelegate } from './api/virtual-row/mdx-virtual-row-builder';
+import { GetMdxVirtualRowCellDelegate } from './api/virtual-row/mdx-virtual-row-builder';
 import { IMdxVirtualRowConfig } from './api/virtual-row/mdx-virtual-row-config';
 import { IMdxVirtualRow } from './api/virtual-row/mdx-virtual-row';
 import { MdxVirtualTableBuilder } from './api/virtual-row/mdx-virtual-table-builder';
@@ -36,13 +36,13 @@ export class Mdx {
     const query: IMdxTableQuery = {
       ...options,
       measures: config.measures,
-      rows: config.groupByLevelExpression ? [config.xAxisLevelExpression, config.groupByLevelExpression] : [config.xAxisLevelExpression]
+      rows: config.groupByLevelExpression ? [config.xAxisLevelExpression, config.groupByLevelExpression] : [config.xAxisLevelExpression],
     };
 
-    const includeAll = (query.filters && query.filters.some(f => f.includeAllAggregation)) || false;
-    const includeTotalCount = (query.filters && query.filters.some(f => f.includeInTotalCount)) || false;
+    const includeAll = (query.filters && query.filters.some((f) => f.includeAllAggregation)) || false;
+    const includeTotalCount = (query.filters && query.filters.some((f) => f.includeInTotalCount)) || false;
     return this.postTableQuery(query).pipe(
-      map(response => {
+      map((response) => {
         const columnAxis = response.getColumnAxis();
         const columnTuples = columnAxis.tuples;
         const rowTuples = response.getRowAxis().tuples;
@@ -110,7 +110,7 @@ export class Mdx {
           for (const rowTuple of rowTuples) {
             const currentXAxis = rowTuple.firstMember();
             if (previousXAxis && currentXAxis.value !== previousXAxis.value) {
-              seriesNameSet.forEach(sn => addMeasureValues(sn, () => null));
+              seriesNameSet.forEach((sn) => addMeasureValues(sn, () => null));
               seriesNameSet = new Set<string>(seriesNames);
             }
 
@@ -124,7 +124,7 @@ export class Mdx {
             previousXAxis = currentXAxis;
           }
 
-          seriesNameSet.forEach(sn => addMeasureValues(sn, () => null));
+          seriesNameSet.forEach((sn) => addMeasureValues(sn, () => null));
         }
 
         return new MdxChart(
@@ -143,12 +143,12 @@ export class Mdx {
   getDimensionData(attributes: string[], options?: IDimensionQueryOptions): Observable<IMdxDimensionRowResult<IMdxAttributeData>> {
     const query: IMdxDimensionQuery = {
       ...options,
-      attributes
+      attributes,
     };
 
-    const includeTotalCount = (query.filters && query.filters.some(f => f.includeInTotalCount)) || false;
+    const includeTotalCount = (query.filters && query.filters.some((f) => f.includeInTotalCount)) || false;
     return this.postDimensionQuery(query).pipe(
-      map(response => {
+      map((response) => {
         const dataRows: IMdxDimensionRow<IMdxAttributeData>[] = [];
         let totalCount: MdxValue = null;
 
@@ -169,7 +169,7 @@ export class Mdx {
 
             dataRows.push({
               data,
-              isNonEmpty: response.getCellValue(dataIndex++) === 1
+              isNonEmpty: response.getCellValue(dataIndex++) === 1,
             });
 
             if (includeTotalCount) {
@@ -180,7 +180,7 @@ export class Mdx {
 
         const result: IMdxDimensionRowResult<IMdxAttributeData> = {
           rows: dataRows,
-          totalCount: totalCount != null ? Number(totalCount) : null
+          totalCount: totalCount != null ? Number(totalCount) : null,
         };
 
         return result;
@@ -194,7 +194,7 @@ export class Mdx {
   ): Observable<IMdxDimensionRowResult<TDimensionData>> {
     const attributeMap = this.createExpressionMap(attributes);
     return this.getDimensionData(Array.from(attributeMap.keys()), options).pipe(
-      map(dataResult => {
+      map((dataResult) => {
         const mapDataToDto = (r: IMdxDimensionRow<IMdxAttributeData>) => {
           const dtoData = {} as TDimensionData;
           for (const levelExpression in r.data) {
@@ -210,7 +210,7 @@ export class Mdx {
 
           const dtoRow: IMdxDimensionRow<TDimensionData> = {
             data: dtoData,
-            isNonEmpty: r.isNonEmpty
+            isNonEmpty: r.isNonEmpty,
           };
 
           return dtoRow;
@@ -218,7 +218,7 @@ export class Mdx {
 
         const dtoResult: IMdxDimensionRowResult<TDimensionData> = {
           rows: dataResult.rows.map(mapDataToDto),
-          totalCount: dataResult.totalCount
+          totalCount: dataResult.totalCount,
         };
 
         return dtoResult;
@@ -230,13 +230,13 @@ export class Mdx {
     const query: IMdxTableQuery = {
       ...options,
       measures,
-      rows
+      rows,
     };
 
-    const includeAll = (query.filters && query.filters.some(f => f.includeAllAggregation)) || false;
-    const includeTotalCount = (query.filters && query.filters.some(f => f.includeInTotalCount)) || false;
+    const includeAll = (query.filters && query.filters.some((f) => f.includeAllAggregation)) || false;
+    const includeTotalCount = (query.filters && query.filters.some((f) => f.includeInTotalCount)) || false;
     return this.postTableQuery(query).pipe(
-      map(response => {
+      map((response) => {
         const columnAxis = response.getColumnAxis();
         const columnTuples = columnAxis.tuples;
         const rowTuples = response.getRowAxis().tuples;
@@ -300,7 +300,7 @@ export class Mdx {
         const result: IMdxTableRowResult<IMdxTableRowData> = {
           rows: dataRows,
           totals: includeAll ? totals[0] : null,
-          totalCount: totalCount != null ? Number(totalCount) : null
+          totalCount: totalCount != null ? Number(totalCount) : null,
         };
 
         return result;
@@ -324,7 +324,7 @@ export class Mdx {
     }
 
     return this.getTableRowData(measures, rows, options).pipe(
-      map(dataResult => {
+      map((dataResult) => {
         const mapDataToDto = (r: IMdxTableRowData) => {
           const dtoRow = {} as TRow;
           for (const levelExpression in r) {
@@ -344,7 +344,7 @@ export class Mdx {
         const dtoResult: IMdxTableRowResult<TRow> = {
           rows: dataResult.rows.map(mapDataToDto),
           totals: dataResult.totals ? mapDataToDto(dataResult.totals) : null,
-          totalCount: dataResult.totalCount
+          totalCount: dataResult.totalCount,
         };
 
         return dtoResult;
@@ -352,21 +352,21 @@ export class Mdx {
     );
   }
 
-  getVirtualTableBuilder<TRowCell, TExtendedProperties = any>(): MdxVirtualTableBuilder<TRowCell, TExtendedProperties> {
+  getVirtualTableBuilder<TRowCell = MdxValue, TExtendedProperties = void>(): MdxVirtualTableBuilder<TRowCell, TExtendedProperties> {
     return new MdxVirtualTableBuilder<TRowCell, TExtendedProperties>((config, filters) => this.getVirtualRows(config, filters));
   }
 
-  private getVirtualRows<TRowCell, TExtendedProperties = any>(
+  private getVirtualRows<TRowCell, TExtendedProperties>(
     config: IMdxVirtualRowConfig<TRowCell, TExtendedProperties>,
     filters?: IMdxFilter[]
   ): Observable<IMdxVirtualRow<TRowCell, TExtendedProperties>[]> {
     const query: IMdxTableQuery = {
       measures: config.measures,
-      filters
+      filters,
     };
 
     return this.postTableQuery(query).pipe(
-      map(response => {
+      map((response) => {
         const columnTuples = response.getColumnAxis().tuples;
         if (columnTuples.length !== response.cellData.length) {
           const columnCount = columnTuples.length;
