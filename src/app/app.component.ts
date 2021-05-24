@@ -9,7 +9,8 @@ import {
   IMdxFilter,
   IMdxOrderBy,
   IMdxQueryOptions,
-  IMdxChartConfig
+  IMdxChartConfig,
+  MdxDimensionQueryType,
 } from '../../projects/mdx-rxjs/src';
 import { IMdxResponse } from '../../dist/mdx-rxjs';
 
@@ -23,7 +24,7 @@ interface IMdxFormData {
     levelExpression: string;
     comparisonOperator: string | null;
     comparisonValue: string | null;
-    sortDirection: string | null;
+    sortDirection: MdxSortExpression | '' | null;
     includeAllAggregation: boolean;
     includeInTotalCount: boolean;
     memberKeys: string | null;
@@ -39,6 +40,7 @@ interface IChartFormData {
 interface IDimensionFormData {
   attributes: string;
   measures: string | null;
+  type: MdxDimensionQueryType | '' | null;
 }
 
 interface ITableRowFormData {
@@ -56,7 +58,7 @@ const loadingMessage = 'Loading...';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
   mdxForm: FormGroup;
@@ -73,7 +75,7 @@ export class AppComponent {
     return this.mdxForm.value;
   }
 
-  private get mdxFormFilters(): FormArray {
+  public get mdxFormFilters(): FormArray {
     return this.mdxForm.get('filters') as FormArray;
   }
 
@@ -96,21 +98,22 @@ export class AppComponent {
       url: ['http://localhost/olap/', Validators.required],
       skip: [null],
       top: [null],
-      filters: this.formBuilder.array([])
+      filters: this.formBuilder.array([]),
     });
 
     this.chartForm = this.formBuilder.group({
       measures: [defaultMeasure, Validators.required],
       xAxis: [defaultXAxis, Validators.required],
-      groupBy: [defaultAttribute]
+      groupBy: [defaultAttribute],
     });
     this.dimensionForm = this.formBuilder.group({
       attributes: [defaultAttribute, Validators.required],
-      measures: [defaultMeasure]
+      measures: [defaultMeasure],
+      type: [''],
     });
     this.tableRowForm = this.formBuilder.group({
       measures: [defaultMeasure, Validators.required],
-      rows: [defaultAttribute, Validators.required]
+      rows: [defaultAttribute, Validators.required],
     });
   }
 
@@ -120,10 +123,10 @@ export class AppComponent {
         levelExpression: ['', Validators.required],
         comparisonOperator: [null],
         comparisonValue: [null],
-        sortDirection: [null],
+        sortDirection: [''],
         includeAllAggregation: [false],
         includeInTotalCount: [false],
-        memberKeys: [null]
+        memberKeys: [null],
       })
     );
   }
@@ -139,15 +142,15 @@ export class AppComponent {
     const config: IMdxChartConfig = {
       measures,
       xAxisLevelExpression: formData.xAxis,
-      groupByLevelExpression: formData.groupBy ? formData.groupBy : undefined
+      groupByLevelExpression: formData.groupBy ? formData.groupBy : undefined,
     };
 
     this.showQuery({ config, options });
     this.createMdx()
       .getChartData(config, options)
       .subscribe(
-        chart => this.showResponseModel(chart),
-        error => this.showError(error)
+        (chart) => this.showResponseModel(chart),
+        (error) => this.showError(error)
       );
   }
 
@@ -157,15 +160,16 @@ export class AppComponent {
     const measures = formData.measures ? formData.measures.split('\n') : undefined;
     const options = {
       ...this.getOptions(),
-      measures
+      measures,
+      type: formData.type ? formData.type : undefined,
     };
 
     this.showQuery({ attributes, options });
     this.createMdx()
       .getDimensionData(attributes, options)
       .subscribe(
-        result => this.showResponseModel(result),
-        error => this.showError(error)
+        (result) => this.showResponseModel(result),
+        (error) => this.showError(error)
       );
   }
 
@@ -179,8 +183,8 @@ export class AppComponent {
     this.createMdx()
       .getTableRowData(measures, rows, options)
       .subscribe(
-        result => this.showResponseModel(result),
-        error => this.showError(error)
+        (result) => this.showResponseModel(result),
+        (error) => this.showError(error)
       );
   }
 
@@ -190,11 +194,11 @@ export class AppComponent {
       formData.cube,
       new ProxyMdxHandler(
         new SoapMdxHandler(formData.catalog, formData.url),
-        mdxStatement => {
+        (mdxStatement) => {
           this.showRequest(mdxStatement);
           return mdxStatement;
         },
-        mdxResponse => {
+        (mdxResponse) => {
           this.showResponseData(mdxResponse);
           return mdxResponse;
         }
@@ -214,14 +218,14 @@ export class AppComponent {
           comparisonValue: rawFilter.comparisonValue ? rawFilter.comparisonValue : undefined,
           includeAllAggregation: rawFilter.includeAllAggregation ? rawFilter.includeAllAggregation : undefined,
           includeInTotalCount: rawFilter.includeInTotalCount ? rawFilter.includeInTotalCount : undefined,
-          memberKeys: rawFilter.memberKeys ? rawFilter.memberKeys.split('\n') : undefined
+          memberKeys: rawFilter.memberKeys ? rawFilter.memberKeys.split('\n') : undefined,
         });
       }
 
       if (rawFilter.sortDirection) {
         orderBy.push({
           levelExpression: rawFilter.levelExpression,
-          sortDirection: rawFilter.sortDirection.toLocaleUpperCase() as MdxSortExpression
+          sortDirection: rawFilter.sortDirection,
         });
       }
     }
@@ -230,7 +234,7 @@ export class AppComponent {
       filters: filters.length > 0 ? filters : undefined,
       orderBy: orderBy.length > 0 ? orderBy : undefined,
       skip: formData.skip != null ? formData.skip : undefined,
-      top: formData.top != null ? formData.top : undefined
+      top: formData.top != null ? formData.top : undefined,
     };
   }
 

@@ -64,9 +64,9 @@ export class MdxChart implements IMdxChart {
 
   map<TSeries>(map: MapMdxSeriesDelegate<TSeries>): TSeries[] {
     return this.measures
-      .map(m => {
+      .map((m) => {
         const seriesGroup = this.getSeriesGroup(m);
-        return this.seriesNames.map(sn => {
+        return this.seriesNames.map((sn) => {
           const series = this.getSeriesFromGroup(seriesGroup, sn);
           return map(series, sn, m);
         });
@@ -75,11 +75,11 @@ export class MdxChart implements IMdxChart {
   }
 
   zip<TSeries>(map: ZipMdxSeriesDelegate<TSeries>): TSeries[] {
-    return this.seriesNames.map(sn => {
+    return this.seriesNames.map((sn) => {
       const data: number[][] = [];
-      const seriesSet = this.measures.map(m => this.getSeries(m, sn));
+      const seriesSet = this.measures.map((m) => this.getSeries(m, sn));
       for (let index = 0; index < this.xAxis.length; index++) {
-        const values = seriesSet.map(s => s[index]);
+        const values = seriesSet.map((s) => s[index]);
         data.push(values);
       }
 

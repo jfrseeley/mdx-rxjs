@@ -1,4 +1,4 @@
 export enum MdxMemberSet {
   Default = '',
-  All = 'All'
+  All = 'All',
 }

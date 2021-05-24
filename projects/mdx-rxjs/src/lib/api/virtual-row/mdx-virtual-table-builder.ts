@@ -4,7 +4,7 @@ import { IMdxVirtualRowConfig } from './mdx-virtual-row-config';
 import { IMdxVirtualRow } from './mdx-virtual-row';
 import { Observable } from 'rxjs';
 
-export class MdxVirtualTableBuilder<TRowCell, TExtendedProperties = any> implements IMdxVirtualRowConfig<TRowCell, TExtendedProperties> {
+export class MdxVirtualTableBuilder<TRowCell, TExtendedProperties> implements IMdxVirtualRowConfig<TRowCell, TExtendedProperties> {
   readonly measures: string[];
   readonly rows: MdxVirtualRowBuilder<TRowCell, TExtendedProperties>[];
 

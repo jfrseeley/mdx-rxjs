@@ -45,7 +45,7 @@ export class MdxExpressionFactory {
   }
 
   createSetFromAttributes(attributes: MdxLevelExpression[]): MdxSetExpression {
-    const sets = attributes.map(a => this.createSetFromAttribute(a));
+    const sets = attributes.map((a) => this.createSetFromAttribute(a));
     return MdxSetExpression.fromSets(sets);
   }
 
@@ -73,7 +73,7 @@ export class MdxExpressionFactory {
       // If ordering only by measures, take the lowest grain, else the lowest inclusive grain
       const includedLevels: MdxLevelExpression[] = [];
       if (unmatchedAttributes.size === 0) {
-        pendingSets = attributes.slice(0, attributes.length - 1).map(a => this.createSetFromAttribute(a));
+        pendingSets = attributes.slice(0, attributes.length - 1).map((a) => this.createSetFromAttribute(a));
         includedLevels.push(attributes[attributes.length - 1]);
       } else {
         for (let index = attributes.length - 1; index > -1; index--) {
@@ -181,9 +181,7 @@ export class MdxExpressionFactory {
 
   private getInclusiveLevelExpressions(options: IMdxSortOptions): string[] {
     return options.orderBy && options.orderBy.length > 0
-      ? Array.from(
-          new Set<string>([...options.orderBy.map(o => o.levelExpression), ...this.totalCountLevelExpressions])
-        )
+      ? Array.from(new Set<string>([...options.orderBy.map((o) => o.levelExpression), ...this.totalCountLevelExpressions]))
       : Array.from(this.totalCountLevelExpressions);
   }
 }

@@ -49,20 +49,20 @@ export class MdxResponse implements IMdxResponse {
 
   private getCountData() {
     let index = 0;
-    const axes = this.axes.map(a => {
-      const memberCounts = Array.from(new Set<number>(a.tuples.map(t => t.members.length))).sort();
+    const axes = this.axes.map((a) => {
+      const memberCounts = Array.from(new Set<number>(a.tuples.map((t) => t.members.length))).sort();
       return {
         axisNumber: index++,
         tupleCount: a.tuples.length,
         maxMemberCount: memberCounts.length > 0 ? memberCounts[memberCounts.length - 1] : 0,
-        minMemberCount: memberCounts.length > 0 ? memberCounts[0] : 0
+        minMemberCount: memberCounts.length > 0 ? memberCounts[0] : 0,
       };
     });
 
     return {
       axes,
       axisCount: this.axes.length,
-      cellCount: this.cellData.length
+      cellCount: this.cellData.length,
     };
   }
 }

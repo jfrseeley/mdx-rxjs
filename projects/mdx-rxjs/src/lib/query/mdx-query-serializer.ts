@@ -34,14 +34,7 @@ export class MdxQuerySerializer {
       queryBuilder
         .defineSet(attributeKey, factory.createSetFromAttributes(attributesWithOrderBy))
         .defineSet(measureKey, MdxSetExpression.fromMeasures(measures))
-        .defineMember(
-          isNonEmptyKey,
-          measureSet
-            .count(true)
-            .equalTo(0)
-            .iif(0, 1),
-          'Is Non-Empty'
-        );
+        .defineMember(isNonEmptyKey, measureSet.count(true).equalTo(0).iif(0, 1), 'Is Non-Empty');
 
       rowAxis = rowAxis.crossJoin(measureSet);
       if (query.type) {
@@ -123,7 +116,7 @@ export class MdxQuerySerializer {
       const rowAxis = new MdxSetExpression(rowKey);
       queryBuilder.defineSet(
         rowKey,
-        factory.createSetFromSortOptions(rows, query, lowestInclusiveSet =>
+        factory.createSetFromSortOptions(rows, query, (lowestInclusiveSet) =>
           measures.length > 0 ? lowestInclusiveSet.nonEmpty(measureKey) : lowestInclusiveSet
         )
       );
@@ -134,10 +127,7 @@ export class MdxQuerySerializer {
       queryBuilder.onColumns(columnAxis);
     }
 
-    return queryBuilder
-      .filterByQueryAxis(factory.getQueryAxis())
-      .filterBySlicerAxis(factory.getSlicerAxis())
-      .toStatement();
+    return queryBuilder.filterByQueryAxis(factory.getQueryAxis()).filterBySlicerAxis(factory.getSlicerAxis()).toStatement();
   }
 
   private defineTotalCount(
@@ -155,6 +145,6 @@ export class MdxQuerySerializer {
   }
 
   private getAttributesWithOrderBy(attributes: string[], options: IMdxSortOptions): string[] {
-    return options.orderBy ? Array.from(new Set<string>(attributes.concat(options.orderBy.map(x => x.levelExpression)))) : attributes;
+    return options.orderBy ? Array.from(new Set<string>(attributes.concat(options.orderBy.map((x) => x.levelExpression)))) : attributes;
   }
 }

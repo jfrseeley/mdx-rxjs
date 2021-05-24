@@ -1,6 +1,8 @@
 <div class="container-fluid">
   <div class="row">
-    <div class="col-12"><h1>MDX Test Harness</h1></div>
+    <div class="col-12">
+      <h1>MDX Test Harness</h1>
+    </div>
   </div>
   <div class="row">
     <div class="col-12 col-lg-8">
@@ -38,54 +40,50 @@
               <div class="form-row">
                 <div class="col-12 col-lg-4">
                   <label [for]="'levelExpression' + filterIndex">Level Expression</label>
-                  <input
-                    [id]="'levelExpression' + filterIndex"
-                    type="text"
-                    class="form-control"
-                    formControlName="levelExpression"
-                    required="required"
-                  />
+                  <input [id]="'levelExpression' + filterIndex" type="text" class="form-control"
+                    formControlName="levelExpression" required="required" />
                 </div>
                 <div class="col-12 col-lg-4">
                   <label [for]="'comparisonOperator' + filterIndex">Comparison Operator</label>
-                  <input [id]="'comparisonOperator' + filterIndex" type="text" class="form-control" formControlName="comparisonOperator" />
+                  <input [id]="'comparisonOperator' + filterIndex" type="text" class="form-control"
+                    formControlName="comparisonOperator" />
                 </div>
                 <div class="col-12 col-lg-4">
                   <label [for]="'comparisonValue' + filterIndex">Comparison Value</label>
-                  <input [id]="'comparisonValue' + filterIndex" type="text" class="form-control" formControlName="comparisonValue" />
+                  <input [id]="'comparisonValue' + filterIndex" type="text" class="form-control"
+                    formControlName="comparisonValue" />
                 </div>
               </div>
               <div class="form-row">
                 <div class="col-12 col-lg-4">
                   <label [for]="'sortDirection' + filterIndex">Sort Direction</label>
-                  <input [id]="'sortDirection' + filterIndex" type="text" class="form-control" formControlName="sortDirection" />
+                  <select [id]="'sortDirection' + filterIndex" class="form-control" formControlName="sortDirection">
+                    <option value=''>None</option>
+                    <option value='ASC'>Ascending</option>
+                    <option value='DESC'>Descending</option>
+                    <option value='BASC'>Ascending - Break Hierarchy</option>
+                    <option value='BDESC'>Descending - Break Hierarchy</option>
+                  </select>
                 </div>
                 <div class="col-12 col-lg-4">
                   <div class="form-group form-check">
-                    <input
-                      [id]="'includeAllAggregation' + filterIndex"
-                      type="checkbox"
-                      class="form-check-input"
-                      formControlName="includeAllAggregation"
-                    />
+                    <input [id]="'includeAllAggregation' + filterIndex" type="checkbox" class="form-check-input"
+                      formControlName="includeAllAggregation" />
                     <label [for]="'includeAllAggregation' + filterIndex">Include All Aggregation</label>
                   </div>
                 </div>
                 <div class="col-12 col-lg-4">
                   <div class="form-group form-check">
-                    <input
-                      [id]="'includeInTotalCount' + filterIndex"
-                      type="checkbox"
-                      class="form-check-input"
-                      formControlName="includeInTotalCount"
-                    />
+                    <input [id]="'includeInTotalCount' + filterIndex" type="checkbox" class="form-check-input"
+                      formControlName="includeInTotalCount" />
                     <label [for]="'includeInTotalCount' + filterIndex">Include in Total Count</label>
                   </div>
                 </div>
               </div>
               <div class="form-group">
                 <label [for]="'memberKeys' + filterIndex">Member Keys</label>
-                <textarea [id]="'memberKeys' + filterIndex" class="form-control" formControlName="memberKeys" rows="5"></textarea>
+                <textarea [id]="'memberKeys' + filterIndex" class="form-control" formControlName="memberKeys"
+                  rows="5"></textarea>
               </div>
               <div class="form-group">
                 <button type="button" class="btn btn-danger btn-sm" (click)="removeFilter(filterIndex)">Remove</button>
@@ -101,7 +99,8 @@
           <form [formGroup]="chartForm" (ngSubmit)="loadChart()">
             <div class="form-group">
               <label for="chart-measures">Measures</label>
-              <textarea id="chart-measures" class="form-control" formControlName="measures" required="required" rows="5"></textarea>
+              <textarea id="chart-measures" class="form-control" formControlName="measures" required="required"
+                rows="5"></textarea>
             </div>
             <div class="form-group">
               <label for="chart-xAxis">X-Axis Level Expression</label>
@@ -120,14 +119,25 @@
           <form [formGroup]="dimensionForm" (ngSubmit)="loadDimension()">
             <div class="form-group">
               <label for="dimension-attributes">Attributes</label>
-              <textarea id="dimension-attributes" class="form-control" formControlName="attributes" required="required" rows="5"></textarea>
+              <textarea id="dimension-attributes" class="form-control" formControlName="attributes" required="required"
+                rows="5"></textarea>
             </div>
             <div class="form-group">
               <label for="dimension-measures">Measures</label>
               <textarea id="dimension-measures" class="form-control" formControlName="measures" rows="5"></textarea>
             </div>
+            <div class="form-group">
+              <label for="dimension-type">Type</label>
+              <select id="dimension-type" class="form-control" formControlName="type">
+                <option value=''>Default</option>
+                <option value='all'>All</option>
+                <option value='empty'>Empty</option>
+                <option value='nonEmpty'>Non-Empty</option>
+              </select>
+            </div>
 
-            <button type="submit" class="btn btn-primary" [disabled]="!mdxForm.valid || !dimensionForm.valid">Load</button>
+            <button type="submit" class="btn btn-primary"
+              [disabled]="!mdxForm.valid || !dimensionForm.valid">Load</button>
           </form>
         </div>
         <div class="col-12 col-lg-4">
@@ -135,14 +145,17 @@
           <form [formGroup]="tableRowForm" (ngSubmit)="loadTableRows()">
             <div class="form-group">
               <label for="table-measures">Measures</label>
-              <textarea id="table-measures" class="form-control" formControlName="measures" required="required" rows="5"></textarea>
+              <textarea id="table-measures" class="form-control" formControlName="measures" required="required"
+                rows="5"></textarea>
             </div>
             <div class="form-group">
               <label for="table-rows">Rows</label>
-              <textarea id="table-rows" class="form-control" formControlName="rows" required="required" rows="5"></textarea>
+              <textarea id="table-rows" class="form-control" formControlName="rows" required="required"
+                rows="5"></textarea>
             </div>
 
-            <button type="submit" class="btn btn-primary" [disabled]="!mdxForm.valid || !tableRowForm.valid">Load</button>
+            <button type="submit" class="btn btn-primary"
+              [disabled]="!mdxForm.valid || !tableRowForm.valid">Load</button>
           </form>
         </div>
       </div>
@@ -151,38 +164,20 @@
       <h2>Data</h2>
       <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item">
-          <a id="query-tab" class="nav-link active" href="#query" data-toggle="tab" role="tab" aria-controls="query" aria-selected="true"
-            >Query</a
-          >
+          <a id="query-tab" class="nav-link active" href="#query" data-toggle="tab" role="tab" aria-controls="query"
+            aria-selected="true">Query</a>
         </li>
         <li class="nav-item">
-          <a id="request-tab" class="nav-link" href="#request" data-toggle="tab" role="tab" aria-controls="request" aria-selected="false"
-            >Request</a
-          >
+          <a id="request-tab" class="nav-link" href="#request" data-toggle="tab" role="tab" aria-controls="request"
+            aria-selected="false">Request</a>
         </li>
         <li class="nav-item">
-          <a
-            id="responseData-tab"
-            class="nav-link"
-            href="#responseData"
-            data-toggle="tab"
-            role="tab"
-            aria-controls="responseData"
-            aria-selected="false"
-            >Response Data</a
-          >
+          <a id="responseData-tab" class="nav-link" href="#responseData" data-toggle="tab" role="tab"
+            aria-controls="responseData" aria-selected="false">Response Data</a>
         </li>
         <li class="nav-item">
-          <a
-            id="responseModel-tab"
-            class="nav-link"
-            href="#responseModel"
-            data-toggle="tab"
-            role="tab"
-            aria-controls="responseModel"
-            aria-selected="false"
-            >Response Model</a
-          >
+          <a id="responseModel-tab" class="nav-link" href="#responseModel" data-toggle="tab" role="tab"
+            aria-controls="responseModel" aria-selected="false">Response Model</a>
         </li>
       </ul>
       <div class="tab-content">

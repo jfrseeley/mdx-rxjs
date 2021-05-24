@@ -4,7 +4,7 @@ import { MdxVirtualCellDefinition, IMdxVirtualRowDefinition } from './mdx-virtua
 import { MdxVirtualTableBuilder } from './mdx-virtual-table-builder';
 
 export type GetMdxVirtualRowCellDelegate<TRowCell> = (data: IMdxCell, measure: IMdxMember) => TRowCell;
-export class MdxVirtualRowBuilder<TRowCell, TExtendedProperties = any> implements IMdxVirtualRowDefinition<TRowCell, TExtendedProperties> {
+export class MdxVirtualRowBuilder<TRowCell, TExtendedProperties> implements IMdxVirtualRowDefinition<TRowCell, TExtendedProperties> {
   readonly cells: MdxVirtualCellDefinition<TRowCell>[] = [];
 
   constructor(
