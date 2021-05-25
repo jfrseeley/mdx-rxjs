@@ -5,7 +5,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "build:lib": "ng build mdx-rxjs",
+    "build:lib": "ng build mdx-rxjs --prod",
     "test": "ng test",
     "test:unit": "echo TODO: add tests via ng test",
     "lint": "ng lint",
