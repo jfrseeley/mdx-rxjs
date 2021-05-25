@@ -7,7 +7,7 @@ set -e
 cd $(dirname $0)/..
 
 # Build project
-npm run build:lib
+npm run build:lib --prod
 
 # Go to build output directory
 cd $(dirname $0)/../dist/mdx-rxjs
