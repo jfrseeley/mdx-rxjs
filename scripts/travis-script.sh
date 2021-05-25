@@ -13,7 +13,7 @@ if is_lint; then
 elif is_unit; then
     npm run test:unit
 elif is_build; then
-    npm run build:lib --prod
+    npm run build:lib
 elif is_publish; then
     ./scripts/publish.sh
 fi
