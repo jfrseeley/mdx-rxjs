@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
+import { throwError } from 'rxjs';
 import {
   Mdx,
   ProxyMdxHandler,
@@ -192,17 +193,20 @@ export class AppComponent {
     const formData = this.mdxFormData;
     return new Mdx(
       formData.cube,
-      new ProxyMdxHandler(
-        new SoapMdxHandler(formData.catalog, formData.url),
-        (mdxStatement) => {
+      new ProxyMdxHandler(new SoapMdxHandler(formData.catalog, formData.url), {
+        catchError: (err) => {
+          console.log(err);
+          return throwError(err);
+        },
+        request: (mdxStatement) => {
           this.showRequest(mdxStatement);
           return mdxStatement;
         },
-        (mdxResponse) => {
+        response: (mdxResponse) => {
           this.showResponseData(mdxResponse);
           return mdxResponse;
-        }
-      )
+        },
+      })
     );
   }
 
