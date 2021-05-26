@@ -1,10 +1,13 @@
+import { MdxValue } from '../../mdx-types';
 import { IMdxCell } from '../../request/models/mdx-cell';
 import { IMdxMember } from '../../request/models/mdx-member';
 import { MdxVirtualCellDefinition, IMdxVirtualRowDefinition } from './mdx-virtual-row-config';
 import { MdxVirtualTableBuilder } from './mdx-virtual-table-builder';
 
-export type GetMdxVirtualRowCellDelegate<TRowCell> = (data: IMdxCell, measure: IMdxMember) => TRowCell;
-export class MdxVirtualRowBuilder<TRowCell, TExtendedProperties> implements IMdxVirtualRowDefinition<TRowCell, TExtendedProperties> {
+export type GetMdxVirtualRowCellDelegate<TRowCell = MdxValue> = (data: IMdxCell, measure: IMdxMember) => TRowCell;
+export class MdxVirtualRowBuilder<TRowCell = MdxValue, TExtendedProperties = void>
+  implements IMdxVirtualRowDefinition<TRowCell, TExtendedProperties>
+{
   readonly cells: MdxVirtualCellDefinition<TRowCell>[] = [];
 
   constructor(

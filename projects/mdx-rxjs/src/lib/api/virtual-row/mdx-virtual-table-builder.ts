@@ -1,10 +1,12 @@
-import { IMdxFilter } from '../../mdx-types';
+import { IMdxFilter, MdxValue } from '../../mdx-types';
 import { MdxVirtualRowBuilder } from './mdx-virtual-row-builder';
 import { IMdxVirtualRowConfig } from './mdx-virtual-row-config';
 import { IMdxVirtualRow } from './mdx-virtual-row';
 import { Observable } from 'rxjs';
 
-export class MdxVirtualTableBuilder<TRowCell, TExtendedProperties> implements IMdxVirtualRowConfig<TRowCell, TExtendedProperties> {
+export class MdxVirtualTableBuilder<TRowCell = MdxValue, TExtendedProperties = void>
+  implements IMdxVirtualRowConfig<TRowCell, TExtendedProperties>
+{
   readonly measures: string[];
   readonly rows: MdxVirtualRowBuilder<TRowCell, TExtendedProperties>[];
 
