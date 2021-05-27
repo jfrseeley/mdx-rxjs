@@ -146,6 +146,7 @@ export class Mdx {
       attributes,
     };
 
+    const includeAll = (query.filters && query.filters.some((f) => f.includeAllAggregation)) || false;
     const includeTotalCount = (query.filters && query.filters.some((f) => f.includeInTotalCount)) || false;
     return this.postDimensionQuery(query).pipe(
       map((response) => {
@@ -174,6 +175,25 @@ export class Mdx {
 
             if (includeTotalCount) {
               totalCount = response.getCellValue(dataIndex++);
+            }
+          }
+        }
+
+        if ((!includeAll && dataRows.length === 1) || (includeAll && dataRows.length === 2)) {
+          const data = dataRows[dataRows.length - 1].data;
+          let foundValue = false;
+
+          for (const levelExpression in data) {
+            if (data.hasOwnProperty(levelExpression) && data[levelExpression] != null) {
+              foundValue = true;
+              break;
+            }
+          }
+
+          if (!foundValue) {
+            dataRows.pop();
+            if (totalCount != null && typeof totalCount === 'number') {
+              totalCount -= 1;
             }
           }
         }

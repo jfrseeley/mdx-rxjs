@@ -28,6 +28,7 @@ export class MdxQuerySerializer {
 
     const factory = new MdxExpressionFactory(attributesWithOrderBy, query);
     const queryBuilder = new MdxQueryBuilder(this.cube);
+    let totalCountSetExpression = factory.getTotalCountSetExpression();
     if (measures.length > 0) {
       const measureSet = new MdxSetExpression(measureKey);
       shouldExtract = true;
@@ -43,9 +44,17 @@ export class MdxQuerySerializer {
             break;
           case 'empty':
             rowAxis = rowAxis.filter(isNonEmpty.equalTo(0));
+            if (totalCountSetExpression) {
+              totalCountSetExpression = totalCountSetExpression.filter(isNonEmpty.equalTo(0));
+            }
+
             break;
           case 'nonEmpty':
             rowAxis = rowAxis.filter(isNonEmpty.equalTo(1));
+            if (totalCountSetExpression) {
+              totalCountSetExpression = totalCountSetExpression.filter(isNonEmpty.equalTo(1));
+            }
+
             break;
           default:
             throw new Error(`Invalid dimension query type ${query.type}.`);
@@ -57,7 +66,6 @@ export class MdxQuerySerializer {
         .defineMember(isNonEmptyKey, 1, 'Is Non-Empty');
     }
 
-    const totalCountSetExpression = factory.getTotalCountSetExpression();
     if (totalCountSetExpression) {
       columnAxis = this.defineTotalCount(queryBuilder, columnAxis, totalCountSetExpression);
     }
