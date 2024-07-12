@@ -5,10 +5,9 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Run Sandbox",
       "type": "chrome",
       "request": "launch",
-      "name": "Launch Chrome against localhost",
-      "runtimeArgs": [" --disable-web-security"],
       "url": "http://localhost:4200",
       "webRoot": "${workspaceFolder}"
     }
