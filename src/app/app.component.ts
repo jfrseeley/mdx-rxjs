@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators, UntypedFormArray } from '@angular/forms';
 import { throwError } from 'rxjs';
 import {
   Mdx,
@@ -11,9 +11,9 @@ import {
   IMdxOrderBy,
   IMdxQueryOptions,
   IMdxChartConfig,
+  IMdxResponse,
   MdxDimensionQueryType,
 } from '../../projects/mdx-rxjs/src';
-import { IMdxResponse } from '../../dist/mdx-rxjs';
 
 interface IMdxFormData {
   cube: string;
@@ -62,10 +62,10 @@ const loadingMessage = 'Loading...';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-  mdxForm: FormGroup;
-  chartForm: FormGroup;
-  dimensionForm: FormGroup;
-  tableRowForm: FormGroup;
+  mdxForm: UntypedFormGroup;
+  chartForm: UntypedFormGroup;
+  dimensionForm: UntypedFormGroup;
+  tableRowForm: UntypedFormGroup;
 
   query = '';
   request = '';
@@ -76,8 +76,8 @@ export class AppComponent {
     return this.mdxForm.value;
   }
 
-  public get mdxFormFilters(): FormArray {
-    return this.mdxForm.get('filters') as FormArray;
+  public get mdxFormFilters(): UntypedFormArray {
+    return this.mdxForm.get('filters') as UntypedFormArray;
   }
 
   private get chartFormData(): IChartFormData {
@@ -92,7 +92,7 @@ export class AppComponent {
     return this.tableRowForm.value;
   }
 
-  constructor(private formBuilder: FormBuilder) {
+  constructor(private formBuilder: UntypedFormBuilder) {
     this.mdxForm = this.formBuilder.group({
       cube: ['Model', Validators.required],
       catalog: ['Test', Validators.required],
