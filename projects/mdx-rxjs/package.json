@@ -2,7 +2,7 @@
   "name": "@healthcatalyst/mdx-rxjs",
   "version": "0.0.8-beta",
   "peerDependencies": {
-    "rxjs": "^6.5.2"
+    "rxjs": "^7.8.1"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
