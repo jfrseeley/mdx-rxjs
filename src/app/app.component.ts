@@ -11,9 +11,9 @@ import {
   IMdxOrderBy,
   IMdxQueryOptions,
   IMdxChartConfig,
+  IMdxResponse,
   MdxDimensionQueryType,
 } from '../../projects/mdx-rxjs/src';
-import { IMdxResponse } from '../../dist/mdx-rxjs';
 
 interface IMdxFormData {
   cube: string;
