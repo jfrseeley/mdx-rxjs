@@ -13,13 +13,23 @@
     "strict": true,
     "noImplicitAny": false,
     "strictFunctionTypes": false,
-    "target": "es2020",
-    "typeRoots": ["node_modules/@types"],
-    "lib": ["es2018", "dom"],
+    "target": "ES2022",
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "lib": [
+      "es2018",
+      "dom"
+    ],
     "paths": {
-      "mdx-rxjs": ["dist/mdx-rxjs"],
-      "mdx-rxjs/*": ["dist/mdx-rxjs/*"]
-    }
+      "mdx-rxjs": [
+        "dist/mdx-rxjs"
+      ],
+      "mdx-rxjs/*": [
+        "dist/mdx-rxjs/*"
+      ]
+    },
+    "useDefineForClassFields": false
   },
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,
